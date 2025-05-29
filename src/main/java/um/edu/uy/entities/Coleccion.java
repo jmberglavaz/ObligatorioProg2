@@ -1,14 +1,16 @@
 package um.edu.uy.entities;
 
+import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
+import um.edu.uy.TADs.Interfaces.MyList;
+
 public class Coleccion {
     private int id;
     private String titulo;
-    private int cantidadDePeliculas;
-
-    public Coleccion(int id, String titulo, int cantidadDePeliculas) {
+    private MyList<Integer> listaDePeliculas;
+    public Coleccion(int id, String titulo) {
         this.id = id;
         this.titulo = titulo;
-        this.cantidadDePeliculas = cantidadDePeliculas;
+        this.listaDePeliculas = new MyLinkedListImpl<>();
     }
 
     public int getId() {
@@ -27,11 +29,11 @@ public class Coleccion {
         this.titulo = titulo;
     }
 
-    public int getCantidadDePeliculas() {
-        return cantidadDePeliculas;
+    public MyList<Integer> getListaDePeliculas() {
+        return listaDePeliculas;
     }
 
-    public void setCantidadDePeliculas(int cantidadDePeliculas) {
-        this.cantidadDePeliculas = cantidadDePeliculas;
+    public void setListaDePeliculas(MyList<Integer> listaDePeliculas) {
+        this.listaDePeliculas = listaDePeliculas;
     }
 }
