@@ -1,23 +1,19 @@
 package um.edu.uy.entities;
 
+import um.edu.uy.TADs.Interfaces.MyList;
+
 import java.util.Date;
 
 public class Pelicula {
     private int id;
     private String titulo;
-    private String idiomaOriginal;
-    private String genero;
     private Date fechaDeEstreno;
     private int ingresos;
+    private MyList<Evaluacion> listaEvaluaciones;
 
-    // [] evaluaciones
-
-
-    public Pelicula(int id, String titulo, String idiomaOriginal, String genero, Date fechaDeEstreno, int ingresos) {
+    public Pelicula(int id, String titulo, Date fechaDeEstreno, int ingresos) {
         this.id = id;
         this.titulo = titulo;
-        this.idiomaOriginal = idiomaOriginal;
-        this.genero = genero;
         this.fechaDeEstreno = fechaDeEstreno;
         this.ingresos = ingresos;
     }
@@ -36,22 +32,6 @@ public class Pelicula {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
-    }
-
-    public String getIdiomaOriginal() {
-        return idiomaOriginal;
-    }
-
-    public void setIdiomaOriginal(String idiomaOriginal) {
-        this.idiomaOriginal = idiomaOriginal;
-    }
-
-    public String getGenero() {
-        return genero;
-    }
-
-    public void setGenero(String genero) {
-        this.genero = genero;
     }
 
     public Date getFechaDeEstreno() {
