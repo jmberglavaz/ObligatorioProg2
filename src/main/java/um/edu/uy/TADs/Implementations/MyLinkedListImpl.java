@@ -1,10 +1,10 @@
-package TADs.Implementations;
+package um.edu.uy.TADs.Implementations;
 
 import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
 import um.edu.uy.Exceptions.ValueNoExist;
-import um.edu.uy.Interfaces.MyList;
-import um.edu.uy.Nodos.SimpleNode;
+import um.edu.uy.TADs.Interfaces.MyList;
+
 
 public class MyLinkedListImpl<T> implements MyList<T> {
     private SimpleNode<T> head;

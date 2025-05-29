@@ -1,4 +1,4 @@
-package entities;
+package um.edu.uy.entities;
 
 import java.util.Date;
 

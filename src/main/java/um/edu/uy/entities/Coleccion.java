@@ -1,4 +1,4 @@
-package entities;
+package um.edu.uy.entities;
 
 public class Coleccion {
     private int id;
