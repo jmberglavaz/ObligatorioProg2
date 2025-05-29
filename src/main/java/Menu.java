@@ -4,38 +4,38 @@ import java.util.Scanner;
 public class Menu {
     String menuPrincipal = """
             ╔═══════════════════════════════════╗
-            ║   Selecione la opcion que desse:  ║
+            ║       Seleccione una opción:      ║
             ╠═══════════════════════════════════╣
             ║  1. Carga de Datos                ║
-            ║  2. Ejeutar Consultas.            ║
+            ║  2. Ejecutar Consultas            ║
             ║  3. Salir                         ║
             ╚═══════════════════════════════════╝
             """;
     String menuConsultas = """
                 ╔════════════════════════════════════════════════════════════════════════════════════════════╗
-                ║                                      Menu de opciones                                      ║
+                ║                                      Menú de opciones                                      ║
                 ╠════════════════════════════════════════════════════════════════════════════════════════════╣
-                ║ 1. Top 5 de las películas que más calificaciones por idioma.                               ║
-                ║ 2. Top 10 de las películas que mejor calificación media tienen por parte de los usuarios.  ║
-                ║ 3. Top 5 de las colecciones que más ingresos generaron.                                    ║
-                ║ 4. Top 10 de los directores que mejor calificación tienen.                                 ║
-                ║ 5. Actor con más calificaciones recibidas en cada mes del año.                             ║
+                ║ 1. Top 5 de las películas que más calificaciones por idioma                                ║
+                ║ 2. Top 10 de las películas que mejor calificación media tienen por parte de los usuarios   ║
+                ║ 3. Top 5 de las colecciones que más ingresos generaron                                     ║
+                ║ 4. Top 10 de los directores que mejor calificación tienen                                  ║
+                ║ 5. Actor con más calificaciones recibidas en cada mes del año                              ║
                 ║ 6. Usuarios con más calificaciones por género                                              ║
                 ║ 7. Salir                                                                                   ║
                 ╚════════════════════════════════════════════════════════════════════════════════════════════╝
-                Elija una opcion(1-7): \s""";
+                Elija una opción(1-7): \s""";
 
     String errorPrincipal = """
                 ╔════════════════════════════════════════════════════════╗
                 ║                         ERROR:                         ║
-                ║    Opcion no valida, ingrese un numero entre 1 y 3.    ║
+                ║    Opción no válida, ingrese un número entre 1 y 3.    ║
                 ╚════════════════════════════════════════════════════════╝
                 """;
 
     String errorConsultas = """
                 ╔════════════════════════════════════════════════════════╗
                 ║                         ERROR:                         ║
-                ║    Opcion no valida, ingrese un numero entre 1 y 7.    ║
+                ║    Opción no válida, ingrese un número entre 1 y 7.    ║
                 ╚════════════════════════════════════════════════════════╝
                 """;
 
@@ -84,7 +84,7 @@ public class Menu {
 
     private boolean verificarOpcionConsultas(int opcion){
         switch (opcion) {
-            case 1 -> System.out.println("Funcion de peliculas mas evaluadas por idionma (Pendiente)");
+            case 1 -> System.out.println("Funcion de peliculas mas evaluadas por idioma (Pendiente)");
             case 2 -> System.out.println("Funcion de peliculas mejor evaluadas (Pendiente)");
             case 3 -> System.out.println("Funcion de sagas con mayores ingresos (Pendiente)");
             case 4 -> System.out.println("Funcion de directores con mejores clasificaciones (Pendiente)");
