@@ -1,9 +1,9 @@
-package TADs.Implementations;
+package um.edu.uy.TADs.Implementations;
 
 import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
 import um.edu.uy.Exceptions.ValueNoExist;
-import um.edu.uy.Interfaces.MyList;
+import um.edu.uy.TADs.Interfaces.MyList;
 
 
 public class MyArrayListImpl<T> implements MyList<T>{

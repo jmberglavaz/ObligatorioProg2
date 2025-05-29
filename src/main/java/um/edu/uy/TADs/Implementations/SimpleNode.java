@@ -1,4 +1,4 @@
-package TADs.Implementations;
+package um.edu.uy.TADs.Implementations;
 
 public class SimpleNode<T> {
     T data;

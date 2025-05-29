@@ -1,4 +1,4 @@
-package entities;
+package um.edu.uy.entities;
 
 public class Persona {
     private String nombre;
