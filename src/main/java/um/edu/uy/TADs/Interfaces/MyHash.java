@@ -6,4 +6,5 @@ public interface MyHash<T> {
     void insert(String clave, T data) throws ElementAlreadyExist;
     boolean contains(String clave);
     void delete(String clave);
+    int size();
 }

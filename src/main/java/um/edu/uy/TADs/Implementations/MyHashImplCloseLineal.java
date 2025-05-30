@@ -6,11 +6,17 @@ import um.edu.uy.TADs.Interfaces.MyHash;
 
 public class MyHashImplCloseLineal<T> implements MyHash<T> {
     private HashNode<String,T>[] table;
+    private int size;
     private final HashNode<String,T> deleteNode = new HashNode<>(null, null);
 
 
     public MyHashImplCloseLineal(int size) {
         this.table =  new HashNode[size];
+    }
+
+    @Override
+    public int size(){
+        return this.size;
     }
 
     @Override
@@ -31,6 +37,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
                 originalIndex = index;
             }
         }
+        size++;
         this.table[index] = new HashNode<>(data, clave);
     }
 
