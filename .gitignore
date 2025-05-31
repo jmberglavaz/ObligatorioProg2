@@ -41,3 +41,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### resources ###
+/credits.csv/
+/movies_metadata.csv/
+/ratings_1mm.csv/

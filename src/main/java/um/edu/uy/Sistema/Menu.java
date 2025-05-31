@@ -1,4 +1,4 @@
-package um.edu.uy;
+package um.edu.uy.Sistema;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

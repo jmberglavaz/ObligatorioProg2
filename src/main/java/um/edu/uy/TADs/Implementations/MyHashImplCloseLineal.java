@@ -12,6 +12,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
 
     public MyHashImplCloseLineal(int size) {
         this.table =  new HashNode[size];
+        this.size = 0;
     }
 
     @Override
@@ -21,22 +22,24 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
 
     @Override
     public void insert(String clave, T data) throws ElementAlreadyExist {
-        if (contains(clave)){
-            throw new ElementAlreadyExist("The object already exist");
-        }
-
-        int index = Math.abs(clave.hashCode()) % table.length;
+        int index = hash(clave);
         int originalIndex = index;
 
         while ((this.table[index] != null) && (this.table[index] != deleteNode)){
+
+            if (this.table[index].getKey().equals(clave)) {
+                throw new ElementAlreadyExist("The object already exist");
+            }
+
             index = (index + 1) % table.length;
 
             if (index == originalIndex){
                 incrementLength();
-                index = Math.abs(clave.hashCode()) % table.length;
+                index = hash(clave);
                 originalIndex = index;
             }
         }
+
         size++;
         this.table[index] = new HashNode<>(data, clave);
     }
@@ -68,7 +71,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
 
         for (HashNode<String,T> node : oldTable){
             if ((node != null) && (node != deleteNode)){
-                int index = Math.abs(node.getKey().hashCode()) % this.table.length;
+                int index = hash(node.getKey());
                 while (this.table[index] != null) {
                     index = (index + 1) % table.length;
                 }
@@ -89,7 +92,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
     }
 
     private int search(String clave) {
-        int index = Math.abs(clave.hashCode()) % table.length;
+        int index = hash(clave);
         int initialIndex = index;
 
         while (this.table[index] != null) {
@@ -102,5 +105,11 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
             }
         }
         return -1;
+    }
+
+    private int hash(String clave) {
+        int hash = clave.hashCode();
+        hash ^= (hash >>> 16);
+        return Math.abs(hash) % table.length;
     }
 }

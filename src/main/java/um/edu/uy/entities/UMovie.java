@@ -1,7 +1,7 @@
 package um.edu.uy.entities;
 
 import com.opencsv.exceptions.CsvValidationException;
-import um.edu.uy.CargaDatos.CargaDePeliculas;
+import um.edu.uy.Sistema.CargaDePeliculas;
 import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyHash;
 import um.edu.uy.TADs.Interfaces.MyList;
@@ -17,7 +17,7 @@ public class UMovie {
 
     public UMovie() {
         try {
-            this.catalogoDePeliculas = carga.lecturaDePeliculas();
+            this.catalogoDePeliculas = carga.registrarPeliculas();
         } catch (IOException | CsvValidationException ignored) {
             System.out.println("Hubo un error al cargar las peliculas");
         }
