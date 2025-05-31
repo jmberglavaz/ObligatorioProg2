@@ -7,11 +7,11 @@ import java.util.Date;
 public class Pelicula {
     private int id;
     private String titulo;
-    private Date fechaDeEstreno;
-    private int ingresos;
+    private String fechaDeEstreno;
+    private long ingresos;
     private MyList<Evaluacion> listaEvaluaciones;
 
-    public Pelicula(int id, String titulo, Date fechaDeEstreno, int ingresos) {
+    public Pelicula(int id, String titulo, String fechaDeEstreno, long ingresos) {
         this.id = id;
         this.titulo = titulo;
         this.fechaDeEstreno = fechaDeEstreno;
@@ -34,19 +34,19 @@ public class Pelicula {
         this.titulo = titulo;
     }
 
-    public Date getFechaDeEstreno() {
+    public String getFechaDeEstreno() {
         return fechaDeEstreno;
     }
 
-    public void setFechaDeEstreno(Date fechaDeEstreno) {
+    public void setFechaDeEstreno(String fechaDeEstreno) {
         this.fechaDeEstreno = fechaDeEstreno;
     }
 
-    public int getIngresos() {
+    public long getIngresos() {
         return ingresos;
     }
 
-    public void setIngresos(int ingresos) {
+    public void setIngresos(long ingresos) {
         this.ingresos = ingresos;
     }
 }
