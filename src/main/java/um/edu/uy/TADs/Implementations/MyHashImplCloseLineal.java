@@ -87,7 +87,19 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
     @Override
     public T get(K clave) {
         int index = search(clave);
+        if (index < 0){
+            return null;
+        }
         return table[index].getData();
+    }
+
+    @Override
+    public T obtain(int index){
+        try {
+            return table[index].getData();
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
 
