@@ -6,15 +6,25 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import um.edu.uy.Exceptions.ElementAlreadyExist;
+import um.edu.uy.TADs.Implementations.MyArrayListImpl;
 import um.edu.uy.TADs.Implementations.MyHashImplCloseLineal;
 import um.edu.uy.TADs.Interfaces.MyHash;
+import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.entities.Coleccion;
+import um.edu.uy.entities.Genero;
+import um.edu.uy.entities.Idioma;
 import um.edu.uy.entities.Pelicula;
 
 public class CargaDePeliculas {
     CSVReader reader;
-    MyHash<Pelicula> listaDePeliculas;
+    MyHash<Integer, Pelicula> listaDePeliculas;
+    MyHash<Integer, Genero> listaDeGeneros;
+    MyHash<String, Idioma> listaDeIdiomas;
+    MyHash<Integer, Coleccion> listaDeColecciones;
     String[] dataLine;
 
     public CargaDePeliculas(){
@@ -26,9 +36,17 @@ public class CargaDePeliculas {
             e.printStackTrace();
         }
         this.listaDePeliculas = new MyHashImplCloseLineal<>(49999); // Tamaño decidido para que no haya colisiones y que se mejore el tiempo de carga a cambio de ocupar ligeramente mas memoria
+        this.listaDeGeneros = new MyHashImplCloseLineal<>(131);
+        this.listaDeIdiomas = new MyHashImplCloseLineal<>(23);
+        this.listaDeColecciones = new MyHashImplCloseLineal<>(131);
+        try{
+            cargaDeDatos();
+        } catch (IOException | CsvValidationException ignored) {
+            System.out.println("Error al cargar los datos de las peliculas");
+        }
     }
 
-    public MyHash<Pelicula> registrarPeliculas() throws IOException, CsvValidationException {
+    public void cargaDeDatos() throws IOException, CsvValidationException {
         while ((dataLine = reader.readNext()) != null) {
             String id = dataLine[5];
             int numericId = -1;
@@ -44,11 +62,87 @@ public class CargaDePeliculas {
                     ganancias = Long.parseLong(dataLine[13]);
                 } catch (NumberFormatException ignored) {}
 
+                Pelicula tempPelicula = new Pelicula(numericId, dataLine[8], dataLine[12], ganancias);
                 try {
-                    listaDePeliculas.insert(id, new Pelicula(numericId, dataLine[8], dataLine[12], ganancias));
+                    listaDePeliculas.insert(numericId, tempPelicula);
                 } catch (ElementAlreadyExist ignored) {}
+
+                // Se registran los generos no registrados, si ya existe solo agrega la pelicula a la lista del genero
+                MyList<Genero> generos = verifiyGeneros(dataLine[3]);
+                for (int iter = 0; iter < generos.size(); iter++) {
+                    Genero tempGenero = generos.get(iter);
+                    try{
+                        this.listaDeGeneros.insert(tempGenero.getId(),tempGenero);
+                        tempGenero.agregarPelicula(numericId);
+                    } catch (ElementAlreadyExist ignored) {
+                        tempGenero = listaDeGeneros.get(tempGenero.getId());
+                        tempGenero.agregarPelicula(numericId);
+                    }
+                }
+
+                // Se registran los idiomas no registrados, si ya existe solo agrega la pelicula a la lista del idioma
+                Idioma tempIdioma = new Idioma(dataLine[7]);
+                try {
+                    listaDeIdiomas.insert(dataLine[7],tempIdioma);
+                    tempIdioma.agregarPelicula(numericId);
+                } catch (ElementAlreadyExist ignored) {
+                    tempIdioma = listaDeIdiomas.get(dataLine[7]);
+                    tempIdioma.agregarPelicula(numericId);
+                }
+
+                // Se registran las colecciones no registradas, si ya existe solo agrega la pelicula a la lista de la coleccion
+                Coleccion tempColeccion = verififyColeccion(dataLine[1]);
+                if (tempColeccion != null){
+                    try {
+                        listaDeColecciones.insert(tempColeccion.getId(), tempColeccion);
+                        tempColeccion.agregarPelicula(numericId);
+                    } catch (ElementAlreadyExist ignored) {
+                        tempColeccion = listaDeColecciones.get(tempColeccion.getId());
+                        tempColeccion.agregarPelicula(numericId);
+                    }
+                }
             }
         }
+    }
+
+    public MyHash<Integer, Pelicula> getListaDePeliculas() {
         return listaDePeliculas;
+    }
+
+    public MyHash<Integer, Genero> getListaDeGeneros() {
+        return listaDeGeneros;
+    }
+
+    public MyHash<String, Idioma> getListaDeIdiomas() {
+        return listaDeIdiomas;
+    }
+
+    public MyHash<Integer, Coleccion> getListaDeColecciones() {
+        return listaDeColecciones;
+    }
+
+    private MyList<Genero> verifiyGeneros(String input){
+        MyList<Genero> generos = new MyArrayListImpl<>();
+        Pattern pattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            int id = Integer.parseInt(matcher.group(1));
+            String nombre = matcher.group(2);
+            generos.add(new Genero(id, nombre));
+        }
+        return generos;
+    }
+
+    private Coleccion verififyColeccion(String input){
+        Pattern pattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()){
+            int id = Integer.parseInt(matcher.group(1));
+            String nombre = matcher.group(2);
+            return new Coleccion(id, nombre);
+        }
+        return null;
     }
 }

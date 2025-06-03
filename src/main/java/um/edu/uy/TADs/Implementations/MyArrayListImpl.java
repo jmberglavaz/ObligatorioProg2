@@ -14,6 +14,10 @@ public class MyArrayListImpl<T> implements MyList<T>{
         return this.indexLastValue == 0;
     }
 
+    public MyArrayListImpl() {
+        this(10);
+    }
+
     public MyArrayListImpl(int size) {
         this.mainArray = (T[]) new Object[size];
         this.indexLastValue = 0;
@@ -78,7 +82,7 @@ public class MyArrayListImpl<T> implements MyList<T>{
             throw new EmptyListException("Empty list, cannot remove an object");
         }
         T toReturn = this.mainArray[indexLastValue - 1];
-        this.mainArray[indexLastValue] = null;
+        this.mainArray[indexLastValue - 1] = null;
         this.indexLastValue--;
         return toReturn;
     }

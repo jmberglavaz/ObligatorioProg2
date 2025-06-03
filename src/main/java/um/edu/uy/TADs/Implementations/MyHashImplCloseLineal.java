@@ -4,11 +4,15 @@ import um.edu.uy.Exceptions.ElementAlreadyExist;
 import um.edu.uy.Exceptions.ValueNoExist;
 import um.edu.uy.TADs.Interfaces.MyHash;
 
-public class MyHashImplCloseLineal<T> implements MyHash<T> {
-    private HashNode<String,T>[] table;
+public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
+    private HashNode<K,T>[] table;
     private int size;
-    private final HashNode<String,T> deleteNode = new HashNode<>(null, null);
+    private final HashNode<K,T> deleteNode = new HashNode<>(null, null);
 
+
+    public MyHashImplCloseLineal() {
+        this(11);
+    }
 
     public MyHashImplCloseLineal(int size) {
         this.table =  new HashNode[size];
@@ -21,7 +25,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
     }
 
     @Override
-    public void insert(String clave, T data) throws ElementAlreadyExist {
+    public void insert(K clave, T data) throws ElementAlreadyExist {
         int index = hash(clave);
         int originalIndex = index;
 
@@ -45,12 +49,12 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
     }
 
     @Override
-    public boolean contains(String clave) {
+    public boolean contains(K clave) {
         return !(search(clave)<0);
     }
 
     @Override
-    public void delete(String clave) {
+    public void delete(K clave) {
         int index = search(clave);
         if (index < 0){
             throw new ValueNoExist("This object not exist");
@@ -59,7 +63,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
     }
 
     private void incrementLength(){
-        HashNode<String,T>[] oldTable = this.table;
+        HashNode<K,T>[] oldTable = this.table;
         int temp = this.table.length * 2;
         boolean isPrime = semiPrimo(temp);
         while (!isPrime){
@@ -69,7 +73,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
 
         this.table = new HashNode[temp];
 
-        for (HashNode<String,T> node : oldTable){
+        for (HashNode<K,T> node : oldTable){
             if ((node != null) && (node != deleteNode)){
                 int index = hash(node.getKey());
                 while (this.table[index] != null) {
@@ -78,6 +82,12 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
                 this.table[index] = node;
             }
         }
+    }
+
+    @Override
+    public T get(K clave) {
+        int index = search(clave);
+        return table[index].getData();
     }
 
 
@@ -91,7 +101,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
         return true;
     }
 
-    private int search(String clave) {
+    private int search(K clave) {
         int index = hash(clave);
         int initialIndex = index;
 
@@ -107,7 +117,7 @@ public class MyHashImplCloseLineal<T> implements MyHash<T> {
         return -1;
     }
 
-    private int hash(String clave) {
+    private int hash(K clave) {
         int hash = clave.hashCode();
         hash ^= (hash >>> 16);
         return Math.abs(hash) % table.length;

@@ -1,65 +1,40 @@
 package um.edu.uy.entities;
 
-import com.opencsv.exceptions.CsvValidationException;
 import um.edu.uy.Sistema.CargaDePeliculas;
 import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyHash;
 import um.edu.uy.TADs.Interfaces.MyList;
 
-import java.io.IOException;
-
 public class UMovie {
-    private MyHash<Pelicula> catalogoDePeliculas;
-    private MyList<Genero> listaDeGeneros;
-    private MyList<Idioma> listaDeIdioma;
-    private MyList<Director> lsitaDeDirectores;
+    private MyHash<Integer, Pelicula> catalogoDePeliculas;
+    private MyHash<Integer, Genero> listaDeGeneros;
+    private MyHash<String, Idioma> listaDeIdioma;
+    private MyList<Director> listaDeDirectores;
+    private MyHash<Integer, Coleccion> listaDeColecciones;
     private CargaDePeliculas carga = new CargaDePeliculas();
 
     public UMovie() {
-        try {
-            this.catalogoDePeliculas = carga.registrarPeliculas();
-        } catch (IOException | CsvValidationException ignored) {
-            System.out.println("Hubo un error al cargar las peliculas");
-        }
-
-        this.listaDeGeneros =new MyLinkedListImpl<>();
-        this.listaDeIdioma = new MyLinkedListImpl<>();
-        this.lsitaDeDirectores = new MyLinkedListImpl<>();
+        CargaDePeliculas cargaPelis = new CargaDePeliculas();
+        this.catalogoDePeliculas = carga.getListaDePeliculas();
+        this.listaDeGeneros = carga.getListaDeGeneros();
+        this.listaDeIdioma = carga.getListaDeIdiomas();
+        this.listaDeColecciones = carga.getListaDeColecciones();
+        this.listaDeDirectores = new MyLinkedListImpl<>();
     }
 
-    public int cantPeliculas(){
-        return this.catalogoDePeliculas.size();
+    public int cantPeliculas() {
+        return catalogoDePeliculas.size();
     }
 
-    public MyHash<Pelicula> getCatalogoDePeliculas() {
-        return catalogoDePeliculas;
+    public int cantGeneros() {
+        return listaDeGeneros.size();
     }
 
-    public void setCatalogoDePeliculas(MyHash<Pelicula> catalogoDePeliculas) {
-        this.catalogoDePeliculas = catalogoDePeliculas;
+    public void pruebaPeliculasGenero(int idGenero){
+        listaDeGeneros.get(idGenero).printPeliculas();
     }
 
-    public MyList<Genero> getListaDeGeneros() {
-        return listaDeGeneros;
-    }
-
-    public void setListaDeGeneros(MyList<Genero> listaDeGeneros) {
-        this.listaDeGeneros = listaDeGeneros;
-    }
-
-    public MyList<Idioma> getListaDeIdioma() {
-        return listaDeIdioma;
-    }
-
-    public void setListaDeIdioma(MyList<Idioma> listaDeIdioma) {
-        this.listaDeIdioma = listaDeIdioma;
-    }
-
-    public MyList<Director> getLsitaDeDirectores() {
-        return lsitaDeDirectores;
-    }
-
-    public void setLsitaDeDirectores(MyList<Director> lsitaDeDirectores) {
-        this.lsitaDeDirectores = lsitaDeDirectores;
+    public void pruebaPeliculasIdioma(String AcronimoIdioma){
+        listaDeIdioma.get(AcronimoIdioma).printPeliculas();
     }
 }
