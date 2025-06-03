@@ -23,9 +23,11 @@ public class UMovie {
         this.listaDeGeneros = carga.getListaDeGeneros();
         this.listaDeIdioma = carga.getListaDeIdiomas();
         this.listaDeColecciones = carga.getListaDeColecciones();
+        System.out.println("Carga de peliculas finalizada");
         try {
             cargaEvaluaciones.cargaDeDatos(catalogoDePeliculas);
         } catch (IOException | CsvValidationException ignored) {}
+        System.out.println("Carga de evaluaciones finalizada");
         this.listaDeDirectores = new MyLinkedListImpl<>();
     }
 

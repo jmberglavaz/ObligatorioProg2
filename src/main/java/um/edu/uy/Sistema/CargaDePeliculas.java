@@ -129,8 +129,8 @@ public class CargaDePeliculas {
 
         long fin = System.currentTimeMillis();
 
-        estadisticasDeCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
-        estadisitcasDeTablasHash();
+//        estadisticasDeCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
+//        estadisitcasDeTablasHash();
     }
 
     public MyHash<Integer, Pelicula> getListaDePeliculas() {
@@ -186,12 +186,13 @@ public class CargaDePeliculas {
             }
         }
         return null;
+
     }
 
 
     // Devolper Method
     private void estadisticasDeCarga(long inicio, long fin, int peliculasProcesadas, int peliculasValidas){
-        System.out.println("\n=== ESTADISTICAS DE CARGA ===");
+        System.out.println("\n=== ESTADISTICAS DE CARGA DE PELICULAS ===");
         System.out.println("Tiempo total de carga: " + (fin - inicio) + " ms");
         System.out.println("Peliculas procesadas: " + peliculasProcesadas);
         System.out.println("Peliculas validas cargadas: " + peliculasValidas);
@@ -200,6 +201,7 @@ public class CargaDePeliculas {
         System.out.println("Colecciones unicas: " + listaDeColecciones.size());
     }
 
+    // Developer method
     private void estadisitcasDeTablasHash(){
         System.out.println("\n=== ESTADISTICAS DE HASH TABLES ===");
         System.out.println("Peliculas:");

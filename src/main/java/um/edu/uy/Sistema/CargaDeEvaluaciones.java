@@ -30,7 +30,11 @@ public class CargaDeEvaluaciones {
     public void cargaDeDatos(MyHash<Integer, Pelicula> listaDePeliculas) throws CsvValidationException, IOException {
         long totalInicio = System.currentTimeMillis();
         int contador = 0;
-        long totalParseo = 0, totalBusqueda = 0, totalInsert = 0;
+        long totalRecorrido = 0;
+        long totalBusqueda = 0;
+        long totalInsert = 0;
+
+        System.out.println("Iniciando carga de evaluaciones...");
 
         while ((dataLine = reader.readNext()) != null) {
             long t0 = System.nanoTime();
@@ -59,7 +63,7 @@ public class CargaDeEvaluaciones {
 
                 long t4 = System.nanoTime();
 
-                totalParseo += (t1 - t0);
+                totalRecorrido += (t1 - t0);
                 totalBusqueda += (t3 - t2);
                 totalInsert += (t4 - t3);
                 contador++;
@@ -67,8 +71,14 @@ public class CargaDeEvaluaciones {
         }
 
         long totalFin = System.currentTimeMillis();
+//        estadisticasDeTiempoDeCarga(totalInicio, totalInsert, totalFin, totalBusqueda, totalRecorrido, contador);
+    }
+
+    // Develope method
+    private void estadisticasDeTiempoDeCarga(long totalInicio, long totalInsert, long totalFin, long totalBusqueda, long totalRecorrido, long contador){
+        System.out.println("===== ESTADISTICAS DE CARGA DE EVALUACIONES =====");
         System.out.println("Total: " + (totalFin - totalInicio) + " ms");
-        System.out.println("Promedio parseo por línea: " + totalParseo / contador / 1_000_000.0 + " ms");
+        System.out.println("Promedio de recorrido por línea: " + totalRecorrido / contador / 1_000_000.0 + " ms");
         System.out.println("Promedio búsqueda en hash: " + totalBusqueda / contador / 1_000_000.0 + " ms");
         System.out.println("Promedio inserción en película: " + totalInsert / contador / 1_000_000.0 + " ms");
     }
