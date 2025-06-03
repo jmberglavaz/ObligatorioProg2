@@ -8,4 +8,5 @@ public interface MyHash<K,T> {
     void delete(K clave);
     int size();
     T get(K clave);
+    T obtain(int index);
 }

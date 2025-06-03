@@ -1,9 +1,13 @@
 package um.edu.uy.entities;
 
+import com.opencsv.exceptions.CsvValidationException;
+import um.edu.uy.Sistema.CargaDeEvaluaciones;
 import um.edu.uy.Sistema.CargaDePeliculas;
 import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyHash;
 import um.edu.uy.TADs.Interfaces.MyList;
+
+import java.io.IOException;
 
 public class UMovie {
     private MyHash<Integer, Pelicula> catalogoDePeliculas;
@@ -11,14 +15,19 @@ public class UMovie {
     private MyHash<String, Idioma> listaDeIdioma;
     private MyList<Director> listaDeDirectores;
     private MyHash<Integer, Coleccion> listaDeColecciones;
-    private CargaDePeliculas carga = new CargaDePeliculas();
 
     public UMovie() {
-        CargaDePeliculas cargaPelis = new CargaDePeliculas();
+        CargaDePeliculas carga = new CargaDePeliculas();
+        CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones();
         this.catalogoDePeliculas = carga.getListaDePeliculas();
         this.listaDeGeneros = carga.getListaDeGeneros();
         this.listaDeIdioma = carga.getListaDeIdiomas();
         this.listaDeColecciones = carga.getListaDeColecciones();
+        System.out.println("Carga de peliculas finalizada");
+        try {
+            cargaEvaluaciones.cargaDeDatos(catalogoDePeliculas);
+        } catch (IOException | CsvValidationException ignored) {}
+        System.out.println("Carga de evaluaciones finalizada");
         this.listaDeDirectores = new MyLinkedListImpl<>();
     }
 

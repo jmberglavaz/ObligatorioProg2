@@ -4,10 +4,10 @@ import java.util.Date;
 
 public class Evaluacion {
     private int idUsuario;
-    private int calificacion;
+    private float calificacion;
     private Date fecha;
 
-    public Evaluacion(int idUsuario, int calificacion, Date fecha) {
+    public Evaluacion(int idUsuario, float calificacion, Date fecha) {
         this.idUsuario = idUsuario;
         this.calificacion = calificacion;
         this.fecha = fecha;
@@ -21,11 +21,11 @@ public class Evaluacion {
         this.idUsuario = idUsuario;
     }
 
-    public int getCalificacion() {
+    public float getCalificacion() {
         return calificacion;
     }
 
-    public void setCalificacion(int calificacion) {
+    public void setCalificacion(float calificacion) {
         this.calificacion = calificacion;
     }
 

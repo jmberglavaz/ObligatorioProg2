@@ -1,5 +1,6 @@
 package um.edu.uy.entities;
 
+import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyList;
 
 import java.util.Date;
@@ -16,6 +17,7 @@ public class Pelicula {
         this.titulo = titulo;
         this.fechaDeEstreno = fechaDeEstreno;
         this.ingresos = ingresos;
+        listaEvaluaciones = new MyLinkedListImpl<>();
     }
 
     public int getId() {
@@ -48,5 +50,9 @@ public class Pelicula {
 
     public void setIngresos(long ingresos) {
         this.ingresos = ingresos;
+    }
+
+    public void agregarEvaluacion(Evaluacion evaluacion){
+        listaEvaluaciones.add(evaluacion);
     }
 }

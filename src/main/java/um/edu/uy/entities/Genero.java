@@ -1,6 +1,7 @@
 package um.edu.uy.entities;
 
 import um.edu.uy.TADs.Implementations.MyArrayListImpl;
+import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyList;
 
 public class Genero {
@@ -11,7 +12,7 @@ public class Genero {
     public Genero(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
-        this.listaPeliculas = new MyArrayListImpl<>();
+        this.listaPeliculas = new MyLinkedListImpl<>();
     }
 
     public int getId() {
