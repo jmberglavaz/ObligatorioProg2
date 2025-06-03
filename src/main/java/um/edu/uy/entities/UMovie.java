@@ -15,10 +15,9 @@ public class UMovie {
     private MyHash<String, Idioma> listaDeIdioma;
     private MyList<Director> listaDeDirectores;
     private MyHash<Integer, Coleccion> listaDeColecciones;
-    private CargaDePeliculas carga = new CargaDePeliculas();
 
     public UMovie() {
-        CargaDePeliculas cargaPelis = new CargaDePeliculas();
+        CargaDePeliculas carga = new CargaDePeliculas();
         CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones();
         this.catalogoDePeliculas = carga.getListaDePeliculas();
         this.listaDeGeneros = carga.getListaDeGeneros();

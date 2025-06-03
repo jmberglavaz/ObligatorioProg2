@@ -14,10 +14,6 @@ public class MyArrayListImpl<T> implements MyList<T>{
         return this.indexLastValue == 0;
     }
 
-    public MyArrayListImpl() {
-        this(10);
-    }
-
     public MyArrayListImpl(int size) {
         this.mainArray = (T[]) new Object[size];
         this.indexLastValue = 0;

@@ -6,16 +6,14 @@ import um.edu.uy.TADs.Interfaces.MyHash;
 
 public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
     private HashNode<K,T>[] table;
-    private int size;
-    private final HashNode<K,T> deleteNode = new HashNode<>(null, null);
+    private int size;         // Cantidad de elementos insertados
+    private int capacity;     // Tamaño actual de la tabla (longitud del array)
+    private final HashNode<K,T> deleteNode = new HashNode<>(null, null); //Nodo generico para delete
+    private static final double maxFactorDeCarga = 0.85; // Factor de carga máximo
 
-
-    public MyHashImplCloseLineal() {
-        this(11);
-    }
-
-    public MyHashImplCloseLineal(int size) {
-        this.table =  new HashNode[size];
+    public MyHashImplCloseLineal(int initialCapacity) {
+        this.capacity = findNextPrime(initialCapacity);
+        this.table = new HashNode[this.capacity];
         this.size = 0;
     }
 
@@ -26,62 +24,76 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
 
     @Override
     public void insert(K clave, T data) throws ElementAlreadyExist {
-        int index = hash(clave);
-        int originalIndex = index;
-
-        while ((this.table[index] != null) && (this.table[index] != deleteNode)){
-
-            if (this.table[index].getKey().equals(clave)) {
-                throw new ElementAlreadyExist("The object already exist");
-            }
-
-            index = (index + 1) % table.length;
-
-            if (index == originalIndex){
-                incrementLength();
-                index = hash(clave);
-                originalIndex = index;
-            }
+        // Verificar si necesitamos rehashing antes de insertar
+        if ((double) size / capacity >= maxFactorDeCarga) {
+            incrementLength();
         }
 
-        size++;
+        int index = hash(clave);
+        int recorrido = 0;
+
+        while ((this.table[index] != null) && recorrido < capacity) {
+            if (this.table[index] != deleteNode && this.table[index].getKey().equals(clave)) {
+                throw new ElementAlreadyExist("The object already exists");
+            }
+            index = (index + 1) % capacity;
+            recorrido++;
+        }
+
+        if (recorrido >= capacity) {
+            // Esto no debería pasar con el control de factor de carga
+            System.err.println("Error: Tabla llena");
+            incrementLength();
+            insert(clave, data);
+            return;
+        }
+
         this.table[index] = new HashNode<>(data, clave);
+        size++;
     }
 
     @Override
     public boolean contains(K clave) {
-        return !(search(clave)<0);
+        return search(clave) >= 0;
     }
 
     @Override
     public void delete(K clave) {
         int index = search(clave);
         if (index < 0){
-            throw new ValueNoExist("This object not exist");
+            throw new ValueNoExist("This object does not exist");
         }
         this.table[index] = deleteNode;
+        size--;
     }
 
-    private void incrementLength(){
+    private void incrementLength() {
         HashNode<K,T>[] oldTable = this.table;
-        int temp = this.table.length * 2;
-        boolean isPrime = semiPrimo(temp);
-        while (!isPrime){
-            temp++;
-            isPrime = semiPrimo(temp);
-        }
+        int oldCapacity = this.capacity;
 
-        this.table = new HashNode[temp];
+        // Se duplica el tamaño y se encuentra el siguiente primo
+        this.capacity = findNextPrime(this.capacity * 2);
 
-        for (HashNode<K,T> node : oldTable){
-            if ((node != null) && (node != deleteNode)){
-                int index = hash(node.getKey());
-                while (this.table[index] != null) {
-                    index = (index + 1) % table.length;
+        System.out.println("\nRealizando rehashing: tamano anterior = " + oldCapacity + ", tamano nuevo = " + this.capacity +
+                ", el factor de carga era de = " + String.format("%.2f", (double) size / oldCapacity));
+
+        this.table = new HashNode[this.capacity];
+        int oldSize = this.size;
+        this.size = 0;
+
+        // Se reinsertan todos los elementos
+        for (HashNode<K,T> node : oldTable) {
+            if (node != null && node != deleteNode) {
+                try {
+                    insert(node.getKey(), node.getData());
+                } catch (ElementAlreadyExist e) {
+                    // Esto no debería pasar durante rehashing
+                    e.printStackTrace();
                 }
-                this.table[index] = node;
             }
         }
+
+        System.out.println("Rehashing completado: " + oldSize + " elementos insertados\n");
     }
 
     @Override
@@ -102,36 +114,85 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
         }
     }
 
+    private boolean isPrime(int number) {
+        if (number < 2) return false;
+        if (number == 2) return true;
+        if (number % 2 == 0) return false;
 
-    private boolean semiPrimo(int number){
-        int[] listaPrimos = {2, 3, 5, 7, 11, 13, 17, 19, 23};
-        for (int numeroIter : listaPrimos){
-            if (number % numeroIter == 0){
+        for (int i = 3; i * i <= number; i += 2) {
+            if (number % i == 0) {
                 return false;
             }
         }
         return true;
     }
 
+    private int findNextPrime(int number) {
+        while (!isPrime(number)) {
+            number++;
+        }
+        return number;
+    }
+
     private int search(K clave) {
         int index = hash(clave);
-        int initialIndex = index;
+        int probes = 0;
 
-        while (this.table[index] != null) {
+        while (this.table[index] != null && probes < capacity) {
             if (this.table[index] != deleteNode && this.table[index].getKey().equals(clave)) {
                 return index;
             }
-            index = (index + 1) % table.length;
-            if (initialIndex == index){
-                return -1;
-            }
+            index = (index + 1) % capacity;
+            probes++;
         }
+
         return -1;
     }
 
     private int hash(K clave) {
         int hash = clave.hashCode();
         hash ^= (hash >>> 16);
-        return Math.abs(hash) % table.length;
+        hash *= 0x45d9f3b;
+        hash ^= (hash >>> 16);
+        return Math.abs(hash) % capacity;
     }
+
+    // Devolper method
+    public void printStats() {
+        System.out.println("Hash Table Stats:");
+        System.out.println("  Tamano: " + size);
+        System.out.println("  Capacidad: " + capacity);
+        System.out.println("  Factor de Carga: " + String.format("%.2f", (double) size / capacity));
+
+//        int maxProbes = 0;
+//        int totalProbes = 0;
+//        int usedSlots = 0;
+//
+//        for (int i = 0; i < capacity; i++) {
+//            if (table[i] != null && table[i] != deleteNode) {
+//                usedSlots++;
+//                int probes = calculateProbes(table[i].getKey());
+//                totalProbes += probes;
+//                maxProbes = Math.max(maxProbes, probes);
+//            }
+//        }
+//
+//        if (usedSlots > 0) {
+//            System.out.println("  Average probes: " + String.format("%.2f", (double) totalProbes / usedSlots));
+//            System.out.println("  Max probes: " + maxProbes);
+//        }
+    }
+
+
+//    private int calculateProbes(K key) {
+//        int index = hash(key);
+//        int probes = 1;
+//
+//        while (table[index] != null && !table[index].getKey().equals(key)) {
+//            index = (index + 1) % capacity;
+//            probes++;
+//        }
+//
+//        return probes;
+//    }
 }
