@@ -60,10 +60,10 @@ public class CargaDePeliculas {
         while ((dataLine = reader.readNext()) != null) {
             peliculasProcesadas++;
 
-            // Progreso cada 5000 películas
-            if (peliculasProcesadas % 5000 == 0) {
-                System.out.println("\n####### Se han ingresado: " + peliculasProcesadas + " peliculas #######\n");
-            }
+              // Progreso cada 5000 películas
+//            if (peliculasProcesadas % 5000 == 0) {
+//                System.out.println("\n####### Se han ingresado: " + peliculasProcesadas + " peliculas #######\n");
+//            }
 
             String id = dataLine[5];
             int numericId = -1;
@@ -84,7 +84,8 @@ public class CargaDePeliculas {
                 try {
                     listaDePeliculas.insert(numericId, tempPelicula);
                 } catch (ElementAlreadyExist ignored) {
-                    System.out.println("Pelicula duplicada encontrada: ID " + numericId);
+                    //Developer function
+                //    System.out.println("Pelicula duplicada encontrada: ID " + numericId);
                 }
 
                 // Procesar géneros
@@ -128,9 +129,6 @@ public class CargaDePeliculas {
         }
 
         long fin = System.currentTimeMillis();
-
-        estadisticasDeCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
-        estadisitcasDeTablasHash();
     }
 
     public MyHash<Integer, Pelicula> getListaDePeliculas() {

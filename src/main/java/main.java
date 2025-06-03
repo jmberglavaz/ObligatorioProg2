@@ -7,8 +7,6 @@ import java.io.IOException;
 public class main {
     public static void main(String[] args) throws CsvValidationException, IOException {
         UMovie plataforma = new UMovie();
-        System.out.println(plataforma.cantPeliculas());
-        System.out.println(plataforma.cantGeneros());
-        System.out.println("plataforma creada con exito");
+        System.out.println("Plataforma creada con exito");
     }
 }

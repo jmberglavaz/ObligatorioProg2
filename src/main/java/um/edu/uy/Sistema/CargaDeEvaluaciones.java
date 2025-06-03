@@ -28,9 +28,12 @@ public class CargaDeEvaluaciones {
     }
 
     public void cargaDeDatos(MyHash<Integer, Pelicula> listaDePeliculas) throws CsvValidationException, IOException {
+        System.out.println("Iniciando carga de evaluaciones...");
         long totalInicio = System.currentTimeMillis();
         int contador = 0;
-        long totalParseo = 0, totalBusqueda = 0, totalInsert = 0;
+        long totalDeRecorridos = 0;
+        long totalBusqueda = 0;
+        long totalInsert = 0;
 
         while ((dataLine = reader.readNext()) != null) {
             long t0 = System.nanoTime();
@@ -59,7 +62,7 @@ public class CargaDeEvaluaciones {
 
                 long t4 = System.nanoTime();
 
-                totalParseo += (t1 - t0);
+                totalDeRecorridos += (t1 - t0);
                 totalBusqueda += (t3 - t2);
                 totalInsert += (t4 - t3);
                 contador++;
@@ -67,9 +70,16 @@ public class CargaDeEvaluaciones {
         }
 
         long totalFin = System.currentTimeMillis();
+
+//        informeDeTiemposDeCarga(totalInicio, totalFin, totalDeRecorridos, totalBusqueda, totalInsert, contador);
+    }
+
+    // Developer method
+    private void informeDeTiemposDeCarga(long totalInicio, long totalFin, long totalDeRecorridos, long totalBusqueda, long totalInsert, long contador){
+        System.out.println("##### Tiempos de carga de evaluaciones #####");
         System.out.println("Total: " + (totalFin - totalInicio) + " ms");
-        System.out.println("Promedio parseo por línea: " + totalParseo / contador / 1_000_000.0 + " ms");
-        System.out.println("Promedio búsqueda en hash: " + totalBusqueda / contador / 1_000_000.0 + " ms");
+        System.out.println("Promedio de recorrido por línea: " + totalDeRecorridos / contador / 1_000_000.0 + " ms");
+        System.out.println("Promedio busqueda en hash: " + totalBusqueda / contador / 1_000_000.0 + " ms");
         System.out.println("Promedio inserción en película: " + totalInsert / contador / 1_000_000.0 + " ms");
     }
 }
