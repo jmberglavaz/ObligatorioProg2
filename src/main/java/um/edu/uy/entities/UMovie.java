@@ -10,6 +10,7 @@ public class UMovie {
     private MyHash<Integer, Genero> listaDeGeneros;
     private MyHash<String, Idioma> listaDeIdioma;
     private MyList<Director> listaDeDirectores;
+    private MyHash<Integer, Coleccion> listaDeColecciones;
     private CargaDePeliculas carga = new CargaDePeliculas();
 
     public UMovie() {
@@ -17,6 +18,7 @@ public class UMovie {
         this.catalogoDePeliculas = carga.getListaDePeliculas();
         this.listaDeGeneros = carga.getListaDeGeneros();
         this.listaDeIdioma = carga.getListaDeIdiomas();
+        this.listaDeColecciones = carga.getListaDeColecciones();
         this.listaDeDirectores = new MyLinkedListImpl<>();
     }
 

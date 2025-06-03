@@ -36,4 +36,8 @@ public class Coleccion {
     public void setListaDePeliculas(MyList<Integer> listaDePeliculas) {
         this.listaDePeliculas = listaDePeliculas;
     }
+
+    public void agregarPelicula(int idPelicula){
+        listaDePeliculas.add(idPelicula);
+    }
 }

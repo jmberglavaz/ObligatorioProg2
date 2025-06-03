@@ -14,6 +14,7 @@ import um.edu.uy.TADs.Implementations.MyArrayListImpl;
 import um.edu.uy.TADs.Implementations.MyHashImplCloseLineal;
 import um.edu.uy.TADs.Interfaces.MyHash;
 import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.entities.Coleccion;
 import um.edu.uy.entities.Genero;
 import um.edu.uy.entities.Idioma;
 import um.edu.uy.entities.Pelicula;
@@ -23,6 +24,7 @@ public class CargaDePeliculas {
     MyHash<Integer, Pelicula> listaDePeliculas;
     MyHash<Integer, Genero> listaDeGeneros;
     MyHash<String, Idioma> listaDeIdiomas;
+    MyHash<Integer, Coleccion> listaDeColecciones;
     String[] dataLine;
 
     public CargaDePeliculas(){
@@ -36,6 +38,7 @@ public class CargaDePeliculas {
         this.listaDePeliculas = new MyHashImplCloseLineal<>(49999); // Tamaño decidido para que no haya colisiones y que se mejore el tiempo de carga a cambio de ocupar ligeramente mas memoria
         this.listaDeGeneros = new MyHashImplCloseLineal<>(131);
         this.listaDeIdiomas = new MyHashImplCloseLineal<>(23);
+        this.listaDeColecciones = new MyHashImplCloseLineal<>(131);
         try{
             cargaDeDatos();
         } catch (IOException | CsvValidationException ignored) {
@@ -86,6 +89,18 @@ public class CargaDePeliculas {
                     tempIdioma = listaDeIdiomas.get(dataLine[7]);
                     tempIdioma.agregarPelicula(numericId);
                 }
+
+                // Se registran las colecciones no registradas, si ya existe solo agrega la pelicula a la lista de la coleccion
+                Coleccion tempColeccion = verififyColeccion(dataLine[1]);
+                if (tempColeccion != null){
+                    try {
+                        listaDeColecciones.insert(tempColeccion.getId(), tempColeccion);
+                        tempColeccion.agregarPelicula(numericId);
+                    } catch (ElementAlreadyExist ignored) {
+                        tempColeccion = listaDeColecciones.get(tempColeccion.getId());
+                        tempColeccion.agregarPelicula(numericId);
+                    }
+                }
             }
         }
     }
@@ -102,6 +117,10 @@ public class CargaDePeliculas {
         return listaDeIdiomas;
     }
 
+    public MyHash<Integer, Coleccion> getListaDeColecciones() {
+        return listaDeColecciones;
+    }
+
     private MyList<Genero> verifiyGeneros(String input){
         MyList<Genero> generos = new MyArrayListImpl<>();
         Pattern pattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
@@ -109,9 +128,21 @@ public class CargaDePeliculas {
 
         while (matcher.find()) {
             int id = Integer.parseInt(matcher.group(1));
-            String name = matcher.group(2);
-            generos.add(new Genero(id, name));
+            String nombre = matcher.group(2);
+            generos.add(new Genero(id, nombre));
         }
         return generos;
+    }
+
+    private Coleccion verififyColeccion(String input){
+        Pattern pattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()){
+            int id = Integer.parseInt(matcher.group(1));
+            String nombre = matcher.group(2);
+            return new Coleccion(id, nombre);
+        }
+        return null;
     }
 }

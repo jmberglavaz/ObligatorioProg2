@@ -10,8 +10,5 @@ public class main {
         System.out.println(plataforma.cantPeliculas());
         System.out.println(plataforma.cantGeneros());
         System.out.println("plataforma creada con exito");
-
-        plataforma.pruebaPeliculasGenero(35);
-        plataforma.pruebaPeliculasIdioma("fr");
     }
 }
