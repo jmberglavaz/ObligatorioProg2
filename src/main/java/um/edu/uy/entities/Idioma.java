@@ -1,5 +1,6 @@
 package um.edu.uy.entities;
 
+import um.edu.uy.TADs.Implementations.MyArrayListImpl;
 import um.edu.uy.TADs.Interfaces.MyList;
 
 public class Idioma {
@@ -7,10 +8,10 @@ public class Idioma {
     private String acronimo;
     private MyList<Integer> listaPeliculas;
 
-    public Idioma(String nombre, String acronimo, MyList<Integer> listaPeliculas) {
-        this.nombre = nombre;
+    public Idioma(String acronimo) {
+        this.nombre = null;
         this.acronimo = acronimo;
-        this.listaPeliculas = listaPeliculas;
+        this.listaPeliculas = new MyArrayListImpl<>();
     }
 
     public String getNombre() {
@@ -35,5 +36,17 @@ public class Idioma {
 
     public void setListaPeliculas(MyList<Integer> listaPeliculas) {
         this.listaPeliculas = listaPeliculas;
+    }
+
+    public void agregarPelicula(int id) {
+        listaPeliculas.add(id);
+    }
+
+    public void printPeliculas() {
+        System.out.println("#####" + acronimo + "######");
+        for (int i = 0; i < listaPeliculas.size(); i++) {
+            System.out.println(listaPeliculas.get(i));
+        }
+        System.out.println("#####" + acronimo + "######");
     }
 }
