@@ -61,9 +61,9 @@ public class CargaDePeliculas {
             peliculasProcesadas++;
 
             // Progreso cada 5000 películas
-            if (peliculasProcesadas % 5000 == 0) {
-                System.out.println("\n####### Se han ingresado: " + peliculasProcesadas + " peliculas #######\n");
-            }
+//            if (peliculasProcesadas % 5000 == 0) {
+//                System.out.println("\n####### Se han ingresado: " + peliculasProcesadas + " peliculas #######\n");
+//            }
 
             String id = dataLine[5];
             int numericId = -1;
@@ -84,7 +84,7 @@ public class CargaDePeliculas {
                 try {
                     listaDePeliculas.insert(numericId, tempPelicula);
                 } catch (ElementAlreadyExist ignored) {
-                    System.out.println("Pelicula duplicada encontrada: ID " + numericId);
+//                    System.out.println("Pelicula duplicada encontrada: ID " + numericId);
                 }
 
                 // Procesar géneros
