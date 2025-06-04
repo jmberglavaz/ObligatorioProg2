@@ -1,5 +1,6 @@
 import com.opencsv.exceptions.CsvValidationException;
 import um.edu.uy.Sistema.CargaDePeliculas;
+import um.edu.uy.Sistema.Consulta2.Consulta2;
 import um.edu.uy.entities.UMovie;
 
 import java.io.IOException;
