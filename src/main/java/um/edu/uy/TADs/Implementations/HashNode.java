@@ -1,5 +1,7 @@
 package um.edu.uy.TADs.Implementations;
 
+import java.util.Iterator;
+
 public class HashNode<K,T> {
     private T data;
     private K key;

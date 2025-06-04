@@ -4,6 +4,9 @@ import um.edu.uy.Exceptions.ElementAlreadyExist;
 import um.edu.uy.Exceptions.ValueNoExist;
 import um.edu.uy.TADs.Interfaces.MyHash;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
     private HashNode<K,T>[] table;
     private int size;         // Cantidad de elementos insertados
@@ -197,4 +200,38 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
 
         return probes;
     }
+
+//// Iterator
+//    @Override
+//    public Iterator<HashNode<K, T>> iterator() {
+//        return new HashIterator();
+//    }
+//
+//    private class HashIterator implements Iterator<HashNode<K, T>> {
+//    private int indiceActual = 0;
+//    private int cantElementosRetornados = 0;
+//
+//    @Override
+//    public boolean hasNext() {
+//        return cantElementosRetornados < size; // xa checkear que haya un siguiente nodo, la cantidad de elementos recorridos tiene que ser menor al tamaño
+//    }
+//
+//    @Override
+//    public HashNode<K, T> next() {
+//        if (!hasNext()) {
+//            throw new NoSuchElementException("No hay siguiente elemento"); // uso exception de java porque me estaba dando error creando una yo mismo
+//        }
+//        // Busco el siguiente nodo válido:
+//        while (indiceActual < capacity) {
+//            HashNode<K, T> nodo = table[indiceActual];
+//            indiceActual++;
+//
+//            if (nodo != null && nodo != deleteNode) {
+//                cantElementosRetornados++;
+//                return nodo;
+//            }
+//        }
+//        throw new NoSuchElementException("No hay siguiente elemento");
+//    }
+//}
 }

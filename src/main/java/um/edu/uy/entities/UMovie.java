@@ -46,4 +46,8 @@ public class UMovie {
     public void pruebaPeliculasIdioma(String AcronimoIdioma){
         listaDeIdioma.get(AcronimoIdioma).printPeliculas();
     }
+
+    public MyHash<Integer, Pelicula> getCatalogoDePeliculas() {
+        return catalogoDePeliculas;
+    }
 }
