@@ -3,14 +3,13 @@ package um.edu.uy.entities;
 import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyList;
 
-import java.util.Date;
-
 public class Pelicula {
     private int id;
     private String titulo;
     private String fechaDeEstreno;
     private long ingresos;
     private MyList<Evaluacion> listaEvaluaciones;
+    private MyList<String> listaDeActores;
 
     public Pelicula(int id, String titulo, String fechaDeEstreno, long ingresos) {
         this.id = id;
@@ -54,5 +53,9 @@ public class Pelicula {
 
     public void agregarEvaluacion(Evaluacion evaluacion){
         listaEvaluaciones.add(evaluacion);
+    }
+
+    public void setListaDeActores(MyList<String> actores){
+        listaDeActores = actores;
     }
 }

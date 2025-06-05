@@ -15,12 +15,11 @@ public class UMovie {
     private MyHash<Integer, Pelicula> catalogoDePeliculas;
     private MyHash<Integer, Genero> listaDeGeneros;
     private MyHash<String, Idioma> listaDeIdioma;
-    private MyList<Director> listaDeDirectores;
+    private MyHash<Integer,Director> listaDeDirectores;
     private MyHash<Integer, Coleccion> listaDeColecciones;
     private boolean datosCargados = false;
 
     public UMovie() {
-        this.listaDeDirectores = new MyLinkedListImpl<>();
     }
 
     public int cantPeliculas() {

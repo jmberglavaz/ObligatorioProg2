@@ -38,7 +38,7 @@ public class CargaDePeliculas {
             e.printStackTrace();
         }
 
-        this.listaDePeliculas = new MyHashImplCloseLineal<>(60000);
+        this.listaDePeliculas = new MyHashImplCloseLineal<>(59999);
         this.listaDeGeneros = new MyHashImplCloseLineal<>(50);
         this.listaDeIdiomas = new MyHashImplCloseLineal<>(40);
         this.listaDeColecciones = new MyHashImplCloseLineal<>(300);
@@ -186,7 +186,6 @@ public class CargaDePeliculas {
             }
         }
         return null;
-
     }
 
 
