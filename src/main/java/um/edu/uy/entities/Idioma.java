@@ -1,8 +1,7 @@
 package um.edu.uy.entities;
 
-import um.edu.uy.TADs.Implementations.MyArrayListImpl;
-import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
+import um.edu.uy.TADs.List.MyList;
 
 public class Idioma {
     private String nombre;

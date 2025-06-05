@@ -1,10 +1,10 @@
 package um.edu.uy.Sistema.Consulta2;
 
-import um.edu.uy.TADs.Implementations.HashNode;
-import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
-import um.edu.uy.TADs.Implementations.SimpleBinaryNode;
-import um.edu.uy.TADs.Interfaces.MyHash;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.Hash.HashNode;
+import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
+import um.edu.uy.TADs.Tree.SimpleBinaryNode;
+import um.edu.uy.TADs.Hash.MyHash;
+import um.edu.uy.TADs.List.MyList;
 import um.edu.uy.entities.Pelicula;
 import um.edu.uy.entities.UMovie;
 

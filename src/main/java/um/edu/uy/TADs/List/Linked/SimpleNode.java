@@ -1,4 +1,4 @@
-package um.edu.uy.TADs.Implementations;
+package um.edu.uy.TADs.List.Linked;
 
 public class SimpleNode<T> {
     T data;

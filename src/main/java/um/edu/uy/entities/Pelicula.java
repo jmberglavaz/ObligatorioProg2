@@ -1,7 +1,7 @@
 package um.edu.uy.entities;
 
-import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
+import um.edu.uy.TADs.List.MyList;
 
 public class Pelicula {
     private int id;
@@ -73,6 +73,7 @@ public class Pelicula {
         return (float) (sumaDeCalificaciones / cantidadEvaluaciones());
     }
   
-   public void setListaDeActores(MyList<String> actores){
-        listaDeActores = actores;
+   public void setListaDeActores(MyList<String> actores) {
+       listaDeActores = actores;
+   }
 }

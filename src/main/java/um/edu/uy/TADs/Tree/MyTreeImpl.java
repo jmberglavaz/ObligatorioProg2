@@ -1,11 +1,11 @@
-package um.edu.uy.TADs.Implementations;
+package um.edu.uy.TADs.Tree;
 
 import um.edu.uy.Exceptions.EmptyTreeException;
 import um.edu.uy.Exceptions.FullNodoException;
 import um.edu.uy.Exceptions.KeyNotFoundException;
 import um.edu.uy.Exceptions.ParentNotFoundException;
-import um.edu.uy.TADs.Interfaces.MyBinaryTree;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.MyArrayListImpl;
+import um.edu.uy.TADs.List.MyList;
 
 public class MyTreeImpl<K,T> implements MyBinaryTree<K,T> {
     private SimpleBinaryNode<K,T> root;

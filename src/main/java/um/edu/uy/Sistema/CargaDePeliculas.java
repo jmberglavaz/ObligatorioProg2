@@ -11,10 +11,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import um.edu.uy.Exceptions.ElementAlreadyExist;
-import um.edu.uy.TADs.Implementations.MyArrayListImpl;
-import um.edu.uy.TADs.Implementations.MyHashImplCloseLineal;
-import um.edu.uy.TADs.Interfaces.MyHash;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
+import um.edu.uy.TADs.List.MyArrayListImpl;
+import um.edu.uy.TADs.Hash.MyHashImplCloseLineal;
+import um.edu.uy.TADs.Hash.MyHash;
+import um.edu.uy.TADs.List.MyList;
 import um.edu.uy.entities.Coleccion;
 import um.edu.uy.entities.Genero;
 import um.edu.uy.entities.Idioma;
@@ -39,9 +40,9 @@ public class CargaDePeliculas {
         }
 
         this.listaDePeliculas = new MyHashImplCloseLineal<>(59999);
-        this.listaDeGeneros = new MyHashImplCloseLineal<>(50);
-        this.listaDeIdiomas = new MyHashImplCloseLineal<>(40);
-        this.listaDeColecciones = new MyHashImplCloseLineal<>(300);
+        this.listaDeGeneros = new MyHashImplCloseLineal<>(53);
+        this.listaDeIdiomas = new MyHashImplCloseLineal<>(97);
+        this.listaDeColecciones = new MyHashImplCloseLineal<>(1709);
 
         try{
             cargaDeDatos();
@@ -89,8 +90,7 @@ public class CargaDePeliculas {
 
                 // Procesar géneros
                 MyList<Genero> generos = verifiyGeneros(dataLine[3]);
-                for (int iter = 0; iter < generos.size(); iter++) {
-                    Genero tempGenero = generos.get(iter);
+                for (Genero tempGenero : generos) {
                     try{
                         this.listaDeGeneros.insert(tempGenero.getId(),tempGenero);
                         tempGenero.agregarPelicula(numericId);
@@ -150,7 +150,7 @@ public class CargaDePeliculas {
     }
 
     private MyList<Genero> verifiyGeneros(String input){
-        MyList<Genero> generos = new MyArrayListImpl<>(5);
+        MyList<Genero> generos = new MyLinkedListImpl<>();
         if (input == null || input.trim().isEmpty()) {
             return generos;
         }
