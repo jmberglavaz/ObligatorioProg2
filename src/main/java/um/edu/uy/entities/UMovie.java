@@ -3,9 +3,8 @@ package um.edu.uy.entities;
 import com.opencsv.exceptions.CsvValidationException;
 import um.edu.uy.Sistema.CargaDeEvaluaciones;
 import um.edu.uy.Sistema.CargaDePeliculas;
-import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
-import um.edu.uy.TADs.Interfaces.MyHash;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.Sistema.CargaDeStaff;
+import um.edu.uy.TADs.Hash.MyHash;
 
 import java.io.IOException;
 import java.util.InputMismatchException;
@@ -149,16 +148,23 @@ public class UMovie {
     private void cargarDatos(){
         CargaDePeliculas cargaPeliculas = new CargaDePeliculas();
         CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones();
+        CargaDeStaff cargaDeStaff = new CargaDeStaff();
 
         this.catalogoDePeliculas = cargaPeliculas.getListaDePeliculas();
         this.listaDeGeneros = cargaPeliculas.getListaDeGeneros();
         this.listaDeIdioma = cargaPeliculas.getListaDeIdiomas();
         this.listaDeColecciones = cargaPeliculas.getListaDeColecciones();
-        System.out.println("Carga de peliculas finalizada");
+        System.out.println("Carga de peliculas completada");
 
         try {
             cargaEvaluaciones.cargaDeDatos(catalogoDePeliculas);
-        } catch (IOException | CsvValidationException ignored) {}
-        System.out.println("Carga de evaluaciones completas.");
+        } catch (Exception ignored) {}
+        System.out.println("Carga de evaluaciones completada.");
+
+        try {
+            cargaDeStaff.cargaDeDatos(catalogoDePeliculas);
+            this.listaDeDirectores = cargaDeStaff.getListaDeDirectores();
+        } catch (Exception ignored) {}
+        System.out.println("Carga de creditos completada.");
     }
 }

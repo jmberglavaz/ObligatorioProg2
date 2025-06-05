@@ -1,4 +1,4 @@
-package um.edu.uy.TADs.Interfaces;
+package um.edu.uy.TADs.Hash;
 
 import um.edu.uy.Exceptions.ElementAlreadyExist;
 

@@ -1,8 +1,8 @@
-package um.edu.uy.TADs.Implementations;
+package um.edu.uy.TADs.Heap;
 
 import um.edu.uy.Exceptions.EmptyHeapException;
-import um.edu.uy.TADs.Interfaces.MyHeap;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.MyArrayListImpl;
+import um.edu.uy.TADs.List.MyList;
 
 public class MyHeapImpl<T extends Comparable<T>> implements MyHeap<T> {
     private final MyList<T> mainArray;

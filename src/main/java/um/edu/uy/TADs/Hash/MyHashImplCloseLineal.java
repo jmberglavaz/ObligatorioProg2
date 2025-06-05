@@ -1,11 +1,7 @@
-package um.edu.uy.TADs.Implementations;
+package um.edu.uy.TADs.Hash;
 
 import um.edu.uy.Exceptions.ElementAlreadyExist;
 import um.edu.uy.Exceptions.ValueNoExist;
-import um.edu.uy.TADs.Interfaces.MyHash;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
     private HashNode<K,T>[] table;
@@ -186,6 +182,7 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
             System.out.println("  Average probes: " + String.format("%.2f", (double) totalProbes / usedSlots));
             System.out.println("  Max probes: " + maxProbes);
         }
+        System.out.println("\n");
     }
 
 

@@ -2,7 +2,7 @@ package um.edu.uy.Sistema;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import um.edu.uy.TADs.Interfaces.MyHash;
+import um.edu.uy.TADs.Hash.MyHash;
 import um.edu.uy.entities.Evaluacion;
 import um.edu.uy.entities.Pelicula;
 

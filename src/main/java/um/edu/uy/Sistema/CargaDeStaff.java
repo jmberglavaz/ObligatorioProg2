@@ -2,10 +2,10 @@ package um.edu.uy.Sistema;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import um.edu.uy.TADs.Implementations.MyArrayListImpl;
-import um.edu.uy.TADs.Implementations.MyHashImplCloseLineal;
-import um.edu.uy.TADs.Interfaces.MyHash;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.MyArrayListImpl;
+import um.edu.uy.TADs.Hash.MyHashImplCloseLineal;
+import um.edu.uy.TADs.Hash.MyHash;
+import um.edu.uy.TADs.List.MyList;
 import um.edu.uy.entities.Director;
 import um.edu.uy.entities.Pelicula;
 
@@ -35,6 +35,8 @@ public class CargaDeStaff {
 
     public void cargaDeDatos(MyHash<Integer, Pelicula> listaDePelicula){
         int id = -1;
+        System.out.println("Iniciando carga de creditos...");
+
         try{
             id = Integer.parseInt(dataLine[2]);
         } catch (NumberFormatException ignored) {}
@@ -42,13 +44,18 @@ public class CargaDeStaff {
         if (id >= 0){
             Pelicula tempPelicula = listaDePelicula.get(id);
             MyList<String> tempActores = verifiyActors(dataLine[0]);
+
             tempPelicula.setListaDeActores(tempActores);
+
             MyList<Director> directores = verifiyDirectors(dataLine[1]);
-            for (int iter = 0; iter < directores.size(); iter++){
-                Director tempDirector = directores.get(iter);
+            for (Director tempDirector : directores){
                 listaDeDirectores.insert(tempDirector.getId(),tempDirector);
             }
         }
+    }
+
+    public MyHash<Integer, Director> getListaDeDirectores() {
+        return listaDeDirectores;
     }
 
     private MyList<String> verifiyActors(String input){
