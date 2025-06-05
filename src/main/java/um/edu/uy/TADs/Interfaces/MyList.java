@@ -4,7 +4,7 @@ import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
 import um.edu.uy.Exceptions.ValueNoExist;
 
-public interface MyList<T> extends Iterable<T>{
+public interface MyList<T>{
     void add(T data);
     void add(T data, int index) throws ListOutOfIndex;
     void addFirst(T data);
