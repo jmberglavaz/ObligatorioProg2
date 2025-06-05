@@ -55,7 +55,24 @@ public class Pelicula {
         listaEvaluaciones.add(evaluacion);
     }
 
-    public void setListaDeActores(MyList<String> actores){
-        listaDeActores = actores;
+    public MyList<Evaluacion> getListaEvaluaciones() {
+        return listaEvaluaciones;
     }
+
+    private int cantidadEvaluaciones() {
+        return listaEvaluaciones.size();
+    }
+
+    public float getPromedioDeEvaluaciones() {
+        float sumaDeCalificaciones = 0;
+        for (int i = 0; i < listaEvaluaciones.size(); i++) {
+            Evaluacion evaluacion = listaEvaluaciones.get(i);
+            float calificacion = evaluacion.getCalificacion();
+            sumaDeCalificaciones += calificacion;
+        }
+        return (float) (sumaDeCalificaciones / cantidadEvaluaciones());
+    }
+  
+   public void setListaDeActores(MyList<String> actores){
+        listaDeActores = actores;
 }

@@ -38,7 +38,11 @@ public class UMovie {
         listaDeIdioma.get(AcronimoIdioma).printPeliculas();
     }
 
-    String menuPrincipal = """
+    public MyHash<Integer, Pelicula> getCatalogoDePeliculas() {
+        return catalogoDePeliculas;
+    }
+  
+     String menuPrincipal = """
             ╔═══════════════════════════════════╗
             ║       Seleccione una opción:      ║
             ╠═══════════════════════════════════╣
