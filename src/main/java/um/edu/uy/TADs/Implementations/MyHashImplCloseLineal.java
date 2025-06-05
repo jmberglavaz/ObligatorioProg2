@@ -157,7 +157,7 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
     private int hash(K clave) {
         int hash = clave.hashCode();
         hash ^= (hash >>> 16);
-        hash *= 0x45d9f3b;
+        hash *= 73244091;
         hash ^= (hash >>> 16);
         return Math.abs(hash) % capacity;
     }
