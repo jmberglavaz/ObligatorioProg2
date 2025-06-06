@@ -1,4 +1,4 @@
-package um.edu.uy.TADs.Interfaces;
+package um.edu.uy.TADs.Heap;
 
 import um.edu.uy.Exceptions.EmptyListException;
 

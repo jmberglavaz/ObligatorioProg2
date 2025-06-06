@@ -1,9 +1,12 @@
-package um.edu.uy.TADs.Implementations;
+package um.edu.uy.TADs.List;
 
 import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
 import um.edu.uy.Exceptions.ValueNoExist;
-import um.edu.uy.TADs.Interfaces.MyList;
+
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 
 public class MyArrayListImpl<T> implements MyList<T>{
@@ -12,10 +15,6 @@ public class MyArrayListImpl<T> implements MyList<T>{
 
     public boolean isEmpty(){
         return this.indexLastValue == 0;
-    }
-
-    public MyArrayListImpl() {
-        this(10);
     }
 
     public MyArrayListImpl(int size) {
@@ -82,7 +81,7 @@ public class MyArrayListImpl<T> implements MyList<T>{
             throw new EmptyListException("Empty list, cannot remove an object");
         }
         T toReturn = this.mainArray[indexLastValue - 1];
-        this.mainArray[indexLastValue] = null;
+        this.mainArray[indexLastValue - 1] = null;
         this.indexLastValue--;
         return toReturn;
     }
@@ -176,5 +175,20 @@ public class MyArrayListImpl<T> implements MyList<T>{
         }
         if (indexLastValue - positionIndex >= 0)
             System.arraycopy(mainArray, positionIndex, mainArray, positionIndex + 1, indexLastValue - positionIndex);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return null;
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        MyList.super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return MyList.super.spliterator();
     }
 }

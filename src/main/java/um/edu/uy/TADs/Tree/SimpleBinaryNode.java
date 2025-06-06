@@ -1,4 +1,4 @@
-package um.edu.uy.TADs.Implementations;
+package um.edu.uy.TADs.Tree;
 
 public class SimpleBinaryNode<K,T> {
     private K key;

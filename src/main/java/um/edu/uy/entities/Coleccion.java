@@ -1,7 +1,7 @@
 package um.edu.uy.entities;
 
-import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
-import um.edu.uy.TADs.Interfaces.MyList;
+import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
+import um.edu.uy.TADs.List.MyList;
 
 public class Coleccion {
     private int id;
@@ -35,5 +35,9 @@ public class Coleccion {
 
     public void setListaDePeliculas(MyList<Integer> listaDePeliculas) {
         this.listaDePeliculas = listaDePeliculas;
+    }
+
+    public void agregarPelicula(int idPelicula){
+        listaDePeliculas.add(idPelicula);
     }
 }

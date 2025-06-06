@@ -1,14 +1,13 @@
-package um.edu.uy.TADs.Interfaces;
+package um.edu.uy.TADs.List;
 
 import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
 import um.edu.uy.Exceptions.ValueNoExist;
 
-public interface MyList<T> {
+public interface MyList<T> extends Iterable<T> {
     void add(T data);
     void add(T data, int index) throws ListOutOfIndex;
     void addFirst(T data);
-
 
     T delete(int index) throws ListOutOfIndex, EmptyListException;
     T deleteLast() throws EmptyListException;

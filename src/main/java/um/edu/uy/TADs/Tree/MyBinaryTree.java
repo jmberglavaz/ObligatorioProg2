@@ -1,4 +1,6 @@
-package um.edu.uy.TADs.Interfaces;
+package um.edu.uy.TADs.Tree;
+
+import um.edu.uy.TADs.List.MyList;
 
 public interface MyBinaryTree<K,T> {
     T find(K key);
