@@ -1,6 +1,7 @@
 package um.edu.uy.entities;
 
 import um.edu.uy.TADs.Implementations.MyArrayListImpl;
+import um.edu.uy.TADs.Implementations.MyLinkedListImpl;
 import um.edu.uy.TADs.Interfaces.MyList;
 
 public class Idioma {
@@ -11,7 +12,7 @@ public class Idioma {
     public Idioma(String acronimo) {
         this.nombre = null;
         this.acronimo = acronimo;
-        this.listaPeliculas = new MyArrayListImpl<>();
+        this.listaPeliculas = new MyLinkedListImpl<>();
     }
 
     public String getNombre() {
