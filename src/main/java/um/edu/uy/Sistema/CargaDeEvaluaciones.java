@@ -71,7 +71,7 @@ public class CargaDeEvaluaciones {
         }
 
         long totalFin = System.currentTimeMillis();
-//        estadisticasDeTiempoDeCarga(totalInicio, totalInsert, totalFin, totalBusqueda, totalRecorrido, contador);
+        estadisticasDeTiempoDeCarga(totalInicio, totalInsert, totalFin, totalBusqueda, totalRecorrido, contador);
     }
 
     // Develope method

@@ -22,19 +22,20 @@ import um.edu.uy.entities.Idioma;
 import um.edu.uy.entities.Pelicula;
 
 public class CargaDePeliculas {
-    CSVReader reader;
-    MyHash<Integer, Pelicula> listaDePeliculas;
-    MyHash<Integer, Genero> listaDeGeneros;
-    MyHash<String, Idioma> listaDeIdiomas;
-    MyHash<Integer, Coleccion> listaDeColecciones;
-    String[] dataLine;
+    private CSVReader reader;
+    private MyHash<Integer, Pelicula> listaDePeliculas;
+    private MyHash<Integer, Genero> listaDeGeneros;
+    private MyHash<String, Idioma> listaDeIdiomas;
+    private MyHash<Integer, Coleccion> listaDeColecciones;
+    private final Pattern collectionPattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
+    private final Pattern generoPattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
 
     public CargaDePeliculas(){
         try{
             InputStream rutaDeDatos = CargaDePeliculas.class.getResourceAsStream("/movies_metadata.csv");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(rutaDeDatos));
             this.reader = new CSVReader(bufferedReader);
-            this.dataLine = reader.readNext();
+            reader.readNext();
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
@@ -57,7 +58,7 @@ public class CargaDePeliculas {
         int peliculasValidas = 0;
 
         System.out.println("Iniciando carga de peliculas...");
-
+        String[] dataLine;
         while ((dataLine = reader.readNext()) != null) {
             peliculasProcesadas++;
 
@@ -66,70 +67,64 @@ public class CargaDePeliculas {
 //                System.out.println("\n####### Se han ingresado: " + peliculasProcesadas + " peliculas #######\n");
 //            }
 
-            String id = dataLine[5];
-            int numericId = -1;
-
+            int numericId;
             try {
-                numericId = Integer.parseInt(id);
+                numericId = Integer.parseInt(dataLine[5]);
+                peliculasValidas++;
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            long ganancias = 0;
+            try {
+                ganancias = Long.parseLong(dataLine[13]);
             } catch (NumberFormatException ignored) {}
 
-            if (numericId >= 0){
-                peliculasValidas++;
+            Pelicula tempPelicula = new Pelicula(numericId, dataLine[8], dataLine[12], ganancias);
+            try {
+                listaDePeliculas.insert(numericId, tempPelicula);
+            } catch (ElementAlreadyExist ignored) {continue;}
 
-                long ganancias = 0;
-                try {
-                    ganancias = Long.parseLong(dataLine[13]);
-                } catch (NumberFormatException ignored) {}
-
-                Pelicula tempPelicula = new Pelicula(numericId, dataLine[8], dataLine[12], ganancias);
-                try {
-                    listaDePeliculas.insert(numericId, tempPelicula);
+            // Procesar géneros
+            MyList<Genero> generos = verifiyGeneros(dataLine[3]);
+            for (Genero tempGenero : generos) {
+                try{
+                    this.listaDeGeneros.insert(tempGenero.getId(),tempGenero);
+                    tempGenero.agregarPelicula(numericId);
                 } catch (ElementAlreadyExist ignored) {
-//                    System.out.println("Pelicula duplicada encontrada: ID " + numericId);
+                    tempGenero = listaDeGeneros.get(tempGenero.getId());
+                    tempGenero.agregarPelicula(numericId);
                 }
+            }
 
-                // Procesar géneros
-                MyList<Genero> generos = verifiyGeneros(dataLine[3]);
-                for (Genero tempGenero : generos) {
-                    try{
-                        this.listaDeGeneros.insert(tempGenero.getId(),tempGenero);
-                        tempGenero.agregarPelicula(numericId);
-                    } catch (ElementAlreadyExist ignored) {
-                        tempGenero = listaDeGeneros.get(tempGenero.getId());
-                        tempGenero.agregarPelicula(numericId);
-                    }
+            // Procesar idiomas
+            String idioma = dataLine[7];
+            if (idioma != null && !idioma.trim().isEmpty()) {
+                Idioma tempIdioma = new Idioma(idioma);
+                try {
+                    listaDeIdiomas.insert(idioma, tempIdioma);
+                    tempIdioma.agregarPelicula(numericId);
+                } catch (ElementAlreadyExist ignored) {
+                    tempIdioma = listaDeIdiomas.get(idioma);
+                    tempIdioma.agregarPelicula(numericId);
                 }
+            }
 
-                // Procesar idiomas
-                String idioma = dataLine[7];
-                if (idioma != null && !idioma.trim().isEmpty()) {
-                    Idioma tempIdioma = new Idioma(idioma);
-                    try {
-                        listaDeIdiomas.insert(idioma, tempIdioma);
-                        tempIdioma.agregarPelicula(numericId);
-                    } catch (ElementAlreadyExist ignored) {
-                        tempIdioma = listaDeIdiomas.get(idioma);
-                        tempIdioma.agregarPelicula(numericId);
-                    }
-                }
-
-                // Procesar colecciones
-                Coleccion tempColeccion = verififyColeccion(dataLine[1]);
-                if (tempColeccion != null){
-                    try {
-                        listaDeColecciones.insert(tempColeccion.getId(), tempColeccion);
-                        tempColeccion.agregarPelicula(numericId);
-                    } catch (ElementAlreadyExist ignored) {
-                        tempColeccion = listaDeColecciones.get(tempColeccion.getId());
-                        tempColeccion.agregarPelicula(numericId);
-                    }
+            // Procesar colecciones
+            Coleccion tempColeccion = verififyColeccion(dataLine[1]);
+            if (tempColeccion != null){
+                try {
+                    listaDeColecciones.insert(tempColeccion.getId(), tempColeccion);
+                    tempColeccion.agregarPelicula(numericId);
+                } catch (ElementAlreadyExist ignored) {
+                    tempColeccion = listaDeColecciones.get(tempColeccion.getId());
+                    tempColeccion.agregarPelicula(numericId);
                 }
             }
         }
 
         long fin = System.currentTimeMillis();
-
-//        estadisticasDeCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
+        estadisticasDeCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
 //        estadisitcasDeTablasHash();
     }
 
@@ -155,9 +150,7 @@ public class CargaDePeliculas {
             return generos;
         }
 
-        Pattern pattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
-        Matcher matcher = pattern.matcher(input);
-
+        Matcher matcher = generoPattern.matcher(input);
         while (matcher.find()) {
             try {
                 int id = Integer.parseInt(matcher.group(1));
@@ -173,9 +166,7 @@ public class CargaDePeliculas {
             return null;
         }
 
-        Pattern pattern = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
-        Matcher matcher = pattern.matcher(input);
-
+        Matcher matcher = collectionPattern.matcher(input);
         if (matcher.find()){
             try {
                 int id = Integer.parseInt(matcher.group(1));

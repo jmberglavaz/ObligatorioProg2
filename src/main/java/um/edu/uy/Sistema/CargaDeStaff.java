@@ -2,8 +2,8 @@ package um.edu.uy.Sistema;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import um.edu.uy.Exceptions.ElementAlreadyExist;
 import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
-import um.edu.uy.TADs.List.MyArrayListImpl;
 import um.edu.uy.TADs.Hash.MyHashImplCloseLineal;
 import um.edu.uy.TADs.Hash.MyHash;
 import um.edu.uy.TADs.List.MyList;
@@ -14,89 +14,97 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CargaDeStaff {
-    CSVReader reader;
-    String[] dataLine;
-    MyHash<Integer, Director> listaDeDirectores;
+    private CSVReader reader;
+    private final MyHash<Integer, Director> listaDeDirectores;
+    private final Pattern directorPattern = Pattern.compile("\"id\":\\s*(\\d+),.*?\"job\":\\s*\"Director\",.*?\"name\":\\s*\"([^\"]+)\"");
+    private final Pattern actorPattern = Pattern.compile("'name': '([^']{3,})'");
 
     public CargaDeStaff() {
-        try{
-            InputStream rutaDeDatos = CargaDePeliculas.class.getResourceAsStream("/credits.csv"); //Ruta del archivo ratings_1mm.csv
+        this.listaDeDirectores = new MyHashImplCloseLineal<>(60000);
+        try {
+            InputStream rutaDeDatos = CargaDePeliculas.class.getResourceAsStream("/credits.csv");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(rutaDeDatos));
             this.reader = new CSVReader(bufferedReader);
-            this.dataLine = reader.readNext(); // Se lee la primera fila ya que esta indica solamente los nombres de cada columna y no es una evaluacion
+            this.reader.readNext(); // descartar encabezado
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
-        this.listaDeDirectores = new MyHashImplCloseLineal<>(60000);
     }
 
-    public void cargaDeDatos(MyHash<Integer, Pelicula> listaDePelicula){
-        int id = -1;
-        System.out.println("Iniciando carga de creditos...");
+    public void cargaDeDatos(MyHash<Integer, Pelicula> listaDePeliculas) throws CsvValidationException, IOException {
+        System.out.println("Iniciando carga de créditos...");
+        long inicio = System.currentTimeMillis();
+        int count = 0;
 
-        try{
-            id = Integer.parseInt(dataLine[2]);
-        } catch (NumberFormatException ignored) {}
+        String[] dataLine;
+        while ((dataLine = reader.readNext()) != null) {
+            if (dataLine.length < 3) continue;
 
-        if (id >= 0){
-            Pelicula tempPelicula = listaDePelicula.get(id);
-            MyList<String> tempActores = verifiyActors(dataLine[0]);
+            int idPelicula;
+            try {
+                idPelicula = Integer.parseInt(dataLine[2]);
+            } catch (NumberFormatException e) {
+                continue;
+            }
 
-            tempPelicula.setListaDeActores(tempActores);
+            Pelicula pelicula = listaDePeliculas.get(idPelicula);
+            if (pelicula == null) continue;
 
-            MyList<Director> directores = verifiyDirectors(dataLine[1]);
-            for (Director tempDirector : directores){
-                listaDeDirectores.insert(tempDirector.getId(),tempDirector);
+            String actoresRaw = dataLine[0];
+            if (actoresRaw != null && !actoresRaw.isEmpty()) {
+                pelicula.setListaDeActores(parseActores(actoresRaw));
+            }
+
+            String crewRaw = dataLine[1];
+            if (crewRaw != null && crewRaw.contains("Director")) {
+                agregarDirectores(crewRaw, idPelicula);
+            }
+
+            count++;
+        }
+
+        long fin = System.currentTimeMillis();
+        System.out.printf("Créditos cargados: %d entradas en %d ms%n", count, (fin - inicio));
+    }
+
+    private MyList<String> parseActores(String input) {
+        MyList<String> actores = new MyLinkedListImpl<>();
+        HashSet<String> vistos = new HashSet<>();
+
+        Matcher matcher = actorPattern.matcher(input);
+        while (matcher.find()) {
+            String actor = matcher.group(1);
+            if (vistos.add(actor)) {
+                actores.add(actor);
+            }
+        }
+        return actores;
+    }
+
+    private void agregarDirectores(String input, int idPelicula) {
+        Matcher matcher = directorPattern.matcher(input);
+        while (matcher.find()) {
+            try {
+                int idDirector = Integer.parseInt(matcher.group(1));
+                Director director = listaDeDirectores.get(idDirector);
+
+                if (director == null) {
+                    director = new Director(matcher.group(2), idDirector);
+                    listaDeDirectores.insert(idDirector, director);
+                }
+
+                director.getListaPeliculas().add(idPelicula);
+            } catch (NumberFormatException | ElementAlreadyExist ignored) {
             }
         }
     }
 
     public MyHash<Integer, Director> getListaDeDirectores() {
         return listaDeDirectores;
-    }
-
-    private MyList<String> verifiyActors(String input){
-        MyList<String> actores = new MyLinkedListImpl<>();
-        if (input == null || input.trim().isEmpty()) {
-            return actores;
-        }
-
-        Pattern pattern = Pattern.compile("'name':\\s*'([^']+)'");
-        Matcher matcher = pattern.matcher(input);
-
-        while (matcher.find()) {
-            try {
-                String nombre = matcher.group(1);
-                actores.add(nombre);
-            } catch (NumberFormatException ignored) {}
-        }
-        return actores;
-    }
-
-    private MyList<Director> verifiyDirectors(String input){
-        MyList<Director> directores = new MyLinkedListImpl<>();
-        if (input == null || input.trim().isEmpty()) {
-            return directores;
-        }
-
-        Pattern pattern = Pattern.compile("\"id\":\\s*(\\d+),.*?\"job\":\\s*\"([^\"]+)\",.*?\"name\":\\s*\"([^\"]+)\"");
-        Matcher matcher = pattern.matcher(input);
-
-        if (matcher.find()) {
-            String trabajo = matcher.group(2);
-            if (trabajo.equals("Director")) {
-                int id = 0;
-                try{
-                    id = Integer.parseInt(matcher.group(1));
-                } catch (NumberFormatException ignored) {}
-                directores.add(new Director(matcher.group(3), id));
-            }
-        }
-
-        return directores;
     }
 }
