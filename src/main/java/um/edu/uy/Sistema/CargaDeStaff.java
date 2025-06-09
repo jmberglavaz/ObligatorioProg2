@@ -14,97 +14,170 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CargaDeStaff {
-    private CSVReader reader;
-    private final MyHash<Integer, Director> listaDeDirectores;
-    private final Pattern directorPattern = Pattern.compile("\"id\":\\s*(\\d+),.*?\"job\":\\s*\"Director\",.*?\"name\":\\s*\"([^\"]+)\"");
-    private final Pattern actorPattern = Pattern.compile("'name': '([^']{3,})'");
+    private CSVReader readerCSV;
+    private final MyHash<Integer, Director> directores;
+
+    private static final String TRABAJO_DIRECTOR = "\"job\": \"Director\"";
+    private static final String CLAVE_NOMBRE = "\"name\": \"";
+    private static final String CLAVE_ID = "\"id\": ";
+    private static final String CLAVE_NOMBRE_ACTOR = "'name': '"; //Se usa una distinta respecto a director por formatos distinos
 
     public CargaDeStaff() {
-        this.listaDeDirectores = new MyHashImplCloseLineal<>(60000);
+        this.directores = new MyHashImplCloseLineal<>(60000);
         try {
-            InputStream rutaDeDatos = CargaDePeliculas.class.getResourceAsStream("/credits.csv");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(rutaDeDatos));
-            this.reader = new CSVReader(bufferedReader);
-            this.reader.readNext(); // descartar encabezado
+            InputStream archivoDatos = CargaDePeliculas.class.getResourceAsStream("/credits.csv");
+            BufferedReader bufferLectura = new BufferedReader(new InputStreamReader(archivoDatos));
+            this.readerCSV = new CSVReader(bufferLectura);
+            this.readerCSV.readNext();
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
     }
 
-    public void cargaDeDatos(MyHash<Integer, Pelicula> listaDePeliculas) throws CsvValidationException, IOException {
+    public void cargaDeDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
         System.out.println("Iniciando carga de créditos...");
-        long inicio = System.currentTimeMillis();
-        int count = 0;
+        long tiempoInicio = System.currentTimeMillis();
+        int cantidad = 0;
 
-        String[] dataLine;
-        while ((dataLine = reader.readNext()) != null) {
-            if (dataLine.length < 3) continue;
+        String[] lineaDatos;
+        while ((lineaDatos = readerCSV.readNext()) != null) {
+            if (lineaDatos.length < 3) continue;
 
             int idPelicula;
             try {
-                idPelicula = Integer.parseInt(dataLine[2]);
+                idPelicula = Integer.parseInt(lineaDatos[2]);
             } catch (NumberFormatException e) {
                 continue;
             }
 
-            Pelicula pelicula = listaDePeliculas.get(idPelicula);
+            Pelicula pelicula = peliculas.get(idPelicula);
             if (pelicula == null) continue;
 
-            String actoresRaw = dataLine[0];
+            String actoresRaw = lineaDatos[0];
             if (actoresRaw != null && !actoresRaw.isEmpty()) {
-                pelicula.setListaDeActores(parseActores(actoresRaw));
+                pelicula.setListaDeActores(parsearActores(actoresRaw));
             }
 
-            String crewRaw = dataLine[1];
-            if (crewRaw != null && crewRaw.contains("Director")) {
-                agregarDirectores(crewRaw, idPelicula);
+//            if (cantidad % 5000 == 0){
+//                System.out.println("Lista de actores para la película: " + pelicula.getTitulo() + "\n");
+//                for (String actor : pelicula.getListaDeActores()) {
+//                    System.out.println("Actor: " + actor);
+//                }
+//            }
+
+            String equipoRaw = lineaDatos[1];
+            if (equipoRaw != null && equipoRaw.contains("Director")) {
+                agregarDirectores(equipoRaw, idPelicula);
             }
 
-            count++;
+            cantidad++;
         }
 
-        long fin = System.currentTimeMillis();
-        System.out.printf("Créditos cargados: %d entradas en %d ms%n", count, (fin - inicio));
+        long tiempoFin = System.currentTimeMillis();
+        System.out.printf("Créditos cargados: %d entradas en %d ms%n", cantidad, (tiempoFin - tiempoInicio));
     }
 
-    private MyList<String> parseActores(String input) {
+    private MyList<String> parsearActores(String entrada) {
         MyList<String> actores = new MyLinkedListImpl<>();
-        HashSet<String> vistos = new HashSet<>();
+        MyHash<String, Boolean> actoresVistos = new MyHashImplCloseLineal<>(100);
 
-        Matcher matcher = actorPattern.matcher(input);
-        while (matcher.find()) {
-            String actor = matcher.group(1);
-            if (vistos.add(actor)) {
-                actores.add(actor);
+        int posicion = 0;
+        int longitud = entrada.length();
+
+        while (posicion < longitud) {
+            int inicioNombre = entrada.indexOf(CLAVE_NOMBRE_ACTOR, posicion);
+            if (inicioNombre == -1) break;
+
+            inicioNombre += CLAVE_NOMBRE_ACTOR.length();
+            int finNombre = entrada.indexOf("'", inicioNombre);
+
+            if (finNombre == -1 || finNombre <= inicioNombre) {
+                posicion = inicioNombre;
+                continue;
             }
+
+            String nombreActor = entrada.substring(inicioNombre, finNombre);
+
+            if (nombreActor.length() >= 3 && actoresVistos.get(nombreActor) == null) {
+                try {
+                    actoresVistos.insert(nombreActor, true);
+                    actores.add(nombreActor);
+                } catch (ElementAlreadyExist ignored) {}
+            }
+
+            posicion = finNombre + 1;
         }
+
         return actores;
     }
 
-    private void agregarDirectores(String input, int idPelicula) {
-        Matcher matcher = directorPattern.matcher(input);
-        while (matcher.find()) {
-            try {
-                int idDirector = Integer.parseInt(matcher.group(1));
-                Director director = listaDeDirectores.get(idDirector);
+    private void agregarDirectores(String entrada, int idPelicula) {
+        int posicion = 0;
+        int longitud = entrada.length();
 
-                if (director == null) {
-                    director = new Director(matcher.group(2), idDirector);
-                    listaDeDirectores.insert(idDirector, director);
-                }
+        while (posicion < longitud) {
+            int posDirector = entrada.indexOf(TRABAJO_DIRECTOR, posicion);
+            if (posDirector == -1) break;
 
-                director.getListaPeliculas().add(idPelicula);
-            } catch (NumberFormatException | ElementAlreadyExist ignored) {
+            int posId = entrada.lastIndexOf(CLAVE_ID, posDirector);
+            if (posId == -1) {
+                posicion = posDirector + TRABAJO_DIRECTOR.length();
+                continue;
             }
+
+            int inicioId = posId + CLAVE_ID.length();
+            int finId = entrada.indexOf(",", inicioId);
+            if (finId == -1) finId = entrada.indexOf("}", inicioId);
+            if (finId == -1) {
+                posicion = posDirector + TRABAJO_DIRECTOR.length();
+                continue;
+            }
+
+            int idDirector;
+            try {
+                String idStr = entrada.substring(inicioId, finId).trim();
+                idDirector = Integer.parseInt(idStr);
+            } catch (NumberFormatException e) {
+                posicion = posDirector + TRABAJO_DIRECTOR.length();
+                continue;
+            }
+
+            int posNombre = entrada.indexOf(CLAVE_NOMBRE, posDirector);
+            if (posNombre == -1) {
+                posicion = posDirector + TRABAJO_DIRECTOR.length();
+                continue;
+            }
+
+            int inicioNombre = posNombre + CLAVE_NOMBRE.length();
+            int finNombre = entrada.indexOf("\"", inicioNombre);
+            if (finNombre == -1) {
+                posicion = posDirector + TRABAJO_DIRECTOR.length();
+                continue;
+            }
+
+            String nombreDirector = entrada.substring(inicioNombre, finNombre);
+
+            try {
+                Director director = directores.get(idDirector);
+                if (director == null) {
+                    director = new Director(nombreDirector, idDirector);
+                    directores.insert(idDirector, director);
+                }
+                director.getListaPeliculas().add(idPelicula);
+            } catch (ElementAlreadyExist ignored) {
+                Director director = directores.get(idDirector);
+                if (director != null) {
+                    director.getListaPeliculas().add(idPelicula);
+                }
+            }
+
+            posicion = posDirector + TRABAJO_DIRECTOR.length();
         }
     }
 
-    public MyHash<Integer, Director> getListaDeDirectores() {
-        return listaDeDirectores;
+    public MyHash<Integer, Director> getDirectores() {
+        return directores;
     }
 }

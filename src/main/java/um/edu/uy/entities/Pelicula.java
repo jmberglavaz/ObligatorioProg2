@@ -76,4 +76,8 @@ public class Pelicula {
    public void setListaDeActores(MyList<String> actores) {
        listaDeActores = actores;
    }
+
+    public MyList<String> getListaDeActores() {
+         return listaDeActores;
+    }
 }
