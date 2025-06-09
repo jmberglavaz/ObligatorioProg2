@@ -3,7 +3,7 @@ package um.edu.uy.entities;
 import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
 import um.edu.uy.TADs.List.MyList;
 
-public class Pelicula {
+public class Pelicula implements Comparable<Pelicula> {
     private int id;
     private String titulo;
     private String fechaDeEstreno;
@@ -63,14 +63,14 @@ public class Pelicula {
         return listaEvaluaciones.size();
     }
 
+
+
     public float getPromedioDeEvaluaciones() {
         float sumaDeCalificaciones = 0;
-        for (int i = 0; i < listaEvaluaciones.size(); i++) {
-            Evaluacion evaluacion = listaEvaluaciones.get(i);
-            float calificacion = evaluacion.getCalificacion();
-            sumaDeCalificaciones += calificacion;
+        for (Evaluacion tempEvaluacion : listaEvaluaciones) {
+            sumaDeCalificaciones += tempEvaluacion.getCalificacion();
         }
-        return (float) (sumaDeCalificaciones / cantidadEvaluaciones());
+        return sumaDeCalificaciones / cantidadEvaluaciones();
     }
   
    public void setListaDeActores(MyList<String> actores) {
@@ -79,5 +79,10 @@ public class Pelicula {
 
     public MyList<String> getListaDeActores() {
          return listaDeActores;
+    }
+
+    @Override
+    public int compareTo(Pelicula peli) {
+        return Integer.compare(this.listaEvaluaciones.size(), peli.getListaEvaluaciones().size());
     }
 }

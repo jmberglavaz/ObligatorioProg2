@@ -3,6 +3,7 @@ package um.edu.uy.entities;
 import um.edu.uy.Sistema.CargaDeEvaluaciones;
 import um.edu.uy.Sistema.CargaDePeliculas;
 import um.edu.uy.Sistema.CargaDeStaff;
+import um.edu.uy.Sistema.Consulta1.PrimeraConsulta;
 import um.edu.uy.TADs.Hash.MyHash;
 
 import java.util.InputMismatchException;
@@ -127,7 +128,7 @@ public class UMovie {
 
     private boolean verificarOpcionConsultas(int opcion){
         switch (opcion) {
-            case 1 -> System.out.println("Funcion de peliculas mas evaluadas por idioma (Pendiente)");
+            case 1 -> PrimeraConsulta.realizarConsulta(peliculas, idiomas);
             case 2 -> System.out.println("Funcion de peliculas mejor evaluadas (Pendiente)");
             case 3 -> System.out.println("Funcion de sagas con mayores ingresos (Pendiente)");
             case 4 -> System.out.println("Funcion de directores con mejores clasificaciones (Pendiente)");

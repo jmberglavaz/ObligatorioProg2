@@ -39,16 +39,16 @@ public class CargaDeEvaluaciones {
         while ((lineaDatos = lectorCSV.readNext()) != null) {
             long t0 = System.nanoTime();
 
-            int idUsuario = -1;
-            Date fecha = null;
-            Integer idPelicula = -1;
-            float calificacion = 0;
+            int idUsuario;
+            Date fecha;
+            Integer idPelicula;
+            float calificacion;
             try {
                 idUsuario = Integer.parseInt(lineaDatos[0]);
                 idPelicula = Integer.parseInt(lineaDatos[1]);
                 calificacion = Float.parseFloat(lineaDatos[2]);
-                fecha = new Date(Long.parseLong(lineaDatos[3]));
-            } catch (Exception ignored) {}
+                fecha = new Date(Long.parseLong(lineaDatos[3])*1000);
+            } catch (Exception e) {continue;}
 
             long t1 = System.nanoTime();
 
@@ -71,7 +71,7 @@ public class CargaDeEvaluaciones {
         }
 
         long tiempoFin = System.currentTimeMillis();
-        mostrarEstadisticasCarga(tiempoInicio, tiempoInsercion, tiempoFin, tiempoBusqueda, tiempoRecorrido, cantidad);
+//        mostrarEstadisticasCarga(tiempoInicio, tiempoInsercion, tiempoFin, tiempoBusqueda, tiempoRecorrido, cantidad);
     }
 
     private void mostrarEstadisticasCarga(long tiempoInicio, long tiempoInsercion, long tiempoFin, long tiempoBusqueda, long tiempoRecorrido, long cantidad){
