@@ -100,6 +100,10 @@ public class CargaDePeliculas {
                     idioma = idiomas.get(acronimoIdioma);
                     idioma.agregarPelicula(idPelicula);
                 }
+//                if (acronimoIdioma.equals("pt")){
+//                    System.out.println(acronimoIdioma);
+//                    System.out.println(dataLine[8]);
+//                }
             }
 
             Coleccion coleccion = searchColecciones(dataLine[1]);
