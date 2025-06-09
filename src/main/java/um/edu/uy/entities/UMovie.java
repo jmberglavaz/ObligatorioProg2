@@ -1,47 +1,45 @@
 package um.edu.uy.entities;
 
-import com.opencsv.exceptions.CsvValidationException;
 import um.edu.uy.Sistema.CargaDeEvaluaciones;
 import um.edu.uy.Sistema.CargaDePeliculas;
 import um.edu.uy.Sistema.CargaDeStaff;
 import um.edu.uy.TADs.Hash.MyHash;
 
-import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class UMovie {
-    private MyHash<Integer, Pelicula> catalogoDePeliculas;
-    private MyHash<Integer, Genero> listaDeGeneros;
-    private MyHash<String, Idioma> listaDeIdioma;
-    private MyHash<Integer,Director> listaDeDirectores;
-    private MyHash<Integer, Coleccion> listaDeColecciones;
+    private MyHash<Integer, Pelicula> peliculas;
+    private MyHash<Integer, Genero> generos;
+    private MyHash<String, Idioma> idiomas;
+    private MyHash<Integer,Director> directores;
+    private MyHash<Integer, Coleccion> colecciones;
     private boolean datosCargados = false;
 
     public UMovie() {
     }
 
     public int cantPeliculas() {
-        return catalogoDePeliculas.size();
+        return peliculas.size();
     }
 
-    public int cantGeneros() {
-        return listaDeGeneros.size();
+    public int cantidadGeneros() {
+        return generos.size();
     }
 
-    public void pruebaPeliculasGenero(int idGenero){
-        listaDeGeneros.get(idGenero).printPeliculas();
+    public void mostrarPeliculasPorGenero(int idGenero){
+        generos.get(idGenero).printPeliculas();
     }
 
-    public void pruebaPeliculasIdioma(String AcronimoIdioma){
-        listaDeIdioma.get(AcronimoIdioma).printPeliculas();
+    public void mostrarPeliculasPorIdioma(String acronimoIdioma){
+        idiomas.get(acronimoIdioma).printPeliculas();
     }
 
     public MyHash<Integer, Pelicula> getCatalogoDePeliculas() {
-        return catalogoDePeliculas;
+        return peliculas;
     }
-  
-     String menuPrincipal = """
+
+    String menuPrincipal = """
             ╔═══════════════════════════════════╗
             ║       Seleccione una opción:      ║
             ╠═══════════════════════════════════╣
@@ -93,7 +91,6 @@ public class UMovie {
         }
     }
 
-    //Falta cambiar los prints por las funciones correspondientes.
     private boolean verificarOpcionPrincipal(int opcion){
         switch (opcion) {
             case 1 -> {
@@ -150,20 +147,20 @@ public class UMovie {
         CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones();
         CargaDeStaff cargaDeStaff = new CargaDeStaff();
 
-        this.catalogoDePeliculas = cargaPeliculas.getListaDePeliculas();
-        this.listaDeGeneros = cargaPeliculas.getListaDeGeneros();
-        this.listaDeIdioma = cargaPeliculas.getListaDeIdiomas();
-        this.listaDeColecciones = cargaPeliculas.getListaDeColecciones();
+        this.peliculas = cargaPeliculas.getPeliculas();
+        this.generos = cargaPeliculas.getGeneros();
+        this.idiomas = cargaPeliculas.getIdiomas();
+        this.colecciones = cargaPeliculas.getColecciones();
         System.out.println("Carga de peliculas completada");
 
         try {
-            cargaEvaluaciones.cargaDeDatos(catalogoDePeliculas);
+            cargaEvaluaciones.cargarDatos(peliculas);
         } catch (Exception ignored) {}
         System.out.println("Carga de evaluaciones completada.");
 
         try {
-            cargaDeStaff.cargaDeDatos(catalogoDePeliculas);
-            this.listaDeDirectores = cargaDeStaff.getListaDeDirectores();
+            cargaDeStaff.cargaDeDatos(peliculas);
+            this.directores = cargaDeStaff.getDirectores();
         } catch (Exception ignored) {}
         System.out.println("Carga de creditos completada.");
     }
