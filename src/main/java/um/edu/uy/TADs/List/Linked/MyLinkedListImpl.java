@@ -166,7 +166,6 @@ public class MyLinkedListImpl<T> implements MyList<T> {
         return this.head==null;
     }
 
-    // Implementación del Iterator para habilitar for-each
     @Override
     public Iterator<T> iterator() {
         return new MyLinkedListIterator<>(head);
