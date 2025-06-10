@@ -1,14 +1,15 @@
 package um.edu.uy.entities;
 
 import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
+import um.edu.uy.TADs.List.MyArrayListImpl;
 import um.edu.uy.TADs.List.MyList;
 
-public class Pelicula implements Comparable<Pelicula> {
+public class Pelicula implements Comparable<Pelicula>{
     private int id;
     private String titulo;
     private String fechaDeEstreno;
     private long ingresos;
-    private MyList<Evaluacion> listaEvaluaciones;
+    private MyList<MyList<Evaluacion>> listaEvaluaciones;
     private MyList<String> listaDeActores;
 
     public Pelicula(int id, String titulo, String fechaDeEstreno, long ingresos) {
@@ -16,7 +17,10 @@ public class Pelicula implements Comparable<Pelicula> {
         this.titulo = titulo;
         this.fechaDeEstreno = fechaDeEstreno;
         this.ingresos = ingresos;
-        listaEvaluaciones = new MyLinkedListImpl<>();
+        listaEvaluaciones = new MyArrayListImpl<>(12);
+        for (int iter = 0 ; iter < 12 ; iter++){
+            listaEvaluaciones.add(new MyLinkedListImpl<>());
+        }
     }
 
     public int getId() {
@@ -51,26 +55,32 @@ public class Pelicula implements Comparable<Pelicula> {
         this.ingresos = ingresos;
     }
 
-    public void agregarEvaluacion(Evaluacion evaluacion){
-        listaEvaluaciones.add(evaluacion);
-    }
-
-    public MyList<Evaluacion> getListaEvaluaciones() {
+    public MyList<MyList<Evaluacion>> getListaEvaluaciones() {
         return listaEvaluaciones;
     }
 
     private int cantidadEvaluaciones() {
-        return listaEvaluaciones.size();
+        int size = 0;
+        for (MyList<Evaluacion> evalucionesPorMes : listaEvaluaciones){
+            size += evalucionesPorMes.size();
+        }
+        return size;
     }
-
-
 
     public float getPromedioDeEvaluaciones() {
         float sumaDeCalificaciones = 0;
-        for (Evaluacion tempEvaluacion : listaEvaluaciones) {
-            sumaDeCalificaciones += tempEvaluacion.getCalificacion();
+        int size = 0;
+        for (MyList<Evaluacion> tempListaEvaluacion : listaEvaluaciones) {
+            size += tempListaEvaluacion.size();
+            for (Evaluacion tempEvaluacion : tempListaEvaluacion)
+                sumaDeCalificaciones += tempEvaluacion.getCalificacion();
         }
-        return sumaDeCalificaciones / cantidadEvaluaciones();
+        return sumaDeCalificaciones / size;
+    }
+
+    public void agregarEvaluacion(Evaluacion tempEvaluacion) {
+        int mes = tempEvaluacion.getFecha().getMonth();
+        listaEvaluaciones.get(mes).add(tempEvaluacion);
     }
   
    public void setListaDeActores(MyList<String> actores) {
@@ -81,8 +91,9 @@ public class Pelicula implements Comparable<Pelicula> {
          return listaDeActores;
     }
 
+
     @Override
-    public int compareTo(Pelicula peli) {
-        return Integer.compare(this.listaEvaluaciones.size(), peli.getListaEvaluaciones().size());
+    public int compareTo(Pelicula tempPelicula) {
+        return Integer.compare(this.cantidadEvaluaciones(), tempPelicula.cantidadEvaluaciones());
     }
 }

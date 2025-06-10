@@ -3,6 +3,7 @@ package um.edu.uy.TADs.List;
 import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
 import um.edu.uy.Exceptions.ValueNoExist;
+import um.edu.uy.TADs.List.Linked.MyLinkedListIterator;
 
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -179,16 +180,6 @@ public class MyArrayListImpl<T> implements MyList<T>{
 
     @Override
     public Iterator<T> iterator() {
-        return null;
-    }
-
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        MyList.super.forEach(action);
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return MyList.super.spliterator();
+        return new MyArrayListIterator<>(mainArray, size());
     }
 }
