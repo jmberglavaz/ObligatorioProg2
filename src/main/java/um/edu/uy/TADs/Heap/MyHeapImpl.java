@@ -58,7 +58,7 @@ public class MyHeapImpl<T extends Comparable<T>> implements MyHeap<T> {
                 }
                 result.append("[Dato: ").append(this.mainArray.get(elemento + ultimoNodo));
                 if (nivel > 0){
-                    result .append(" ; Padre: ").append(this.mainArray.get((int) (elemento + ultimoNodo - 1)/2));
+                    result .append(" ; Padre: ").append(this.mainArray.get((elemento + ultimoNodo - 1)/2));
                 } else {
                     result.append(" ; Raiz");
                 }

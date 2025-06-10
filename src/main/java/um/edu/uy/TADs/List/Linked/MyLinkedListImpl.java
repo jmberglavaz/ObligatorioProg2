@@ -16,11 +16,10 @@ public class MyLinkedListImpl<T> implements MyList<T> {
         SimpleNode<T> aAgregar = new SimpleNode<>(data);
         if (isEmpty()){
             this.head = aAgregar;
-            this.tail = aAgregar;
         } else {
             this.tail.setNextNode(aAgregar);
-            this.tail = aAgregar;
         }
+        this.tail = aAgregar;
         this.size++;
     }
 

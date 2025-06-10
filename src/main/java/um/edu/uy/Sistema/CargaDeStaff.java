@@ -18,13 +18,15 @@ import java.io.InputStreamReader;
 public class CargaDeStaff {
     private CSVReader readerCSV;
     private final MyHash<Integer, Director> directores;
+    private boolean developer;
 
     private static final String TRABAJO_DIRECTOR = "\"job\": \"Director\"";
     private static final String CLAVE_NOMBRE = "\"name\": \"";
     private static final String CLAVE_ID = "\"id\": ";
     private static final String CLAVE_NOMBRE_ACTOR = "'name': '"; //Se usa una distinta respecto a director por formatos distinos
 
-    public CargaDeStaff() {
+    public CargaDeStaff(boolean developer) {
+        this.developer = developer;
         this.directores = new MyHashImplCloseLineal<>(60000);
         try {
             InputStream archivoDatos = CargaDePeliculas.class.getResourceAsStream("/credits.csv");
@@ -37,9 +39,15 @@ public class CargaDeStaff {
     }
 
     public void cargaDeDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
+        if (developer){
+            cargaDeDatosDev(peliculas);
+        } else {
+            cargaDeDatosNoDev(peliculas);
+        }
+    }
+
+    private void cargaDeDatosNoDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
         System.out.println("Iniciando carga de créditos...");
-        long tiempoInicio = System.currentTimeMillis();
-        int cantidad = 0;
 
         String[] lineaDatos;
         while ((lineaDatos = readerCSV.readNext()) != null) {
@@ -60,23 +68,44 @@ public class CargaDeStaff {
                 pelicula.setListaDeActores(verifyActores(actoresRaw));
             }
 
-//            if (cantidad % 5000 == 0){
-//                System.out.println("Lista de actores para la película: " + pelicula.getTitulo() + "\n");
-//                for (String actor : pelicula.getListaDeActores()) {
-//                    System.out.println("Actor: " + actor);
-//                }
-//            }
+            String equipoRaw = lineaDatos[1];
+            if (equipoRaw != null && equipoRaw.contains("Director")) {
+                agregarDirectores(equipoRaw, idPelicula);
+            }
+        }
+    }
+
+
+    private void cargaDeDatosDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
+        long inicio = System.currentTimeMillis();
+        System.out.println("Iniciando carga de créditos...");
+
+        String[] lineaDatos;
+        while ((lineaDatos = readerCSV.readNext()) != null) {
+            if (lineaDatos.length < 3) continue;
+
+            int idPelicula;
+            try {
+                idPelicula = Integer.parseInt(lineaDatos[2]);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            Pelicula pelicula = peliculas.get(idPelicula);
+            if (pelicula == null) continue;
+
+            String actoresRaw = lineaDatos[0];
+            if (actoresRaw != null && !actoresRaw.isEmpty()) {
+                pelicula.setListaDeActores(verifyActores(actoresRaw));
+            }
 
             String equipoRaw = lineaDatos[1];
             if (equipoRaw != null && equipoRaw.contains("Director")) {
                 agregarDirectores(equipoRaw, idPelicula);
             }
-
-            cantidad++;
         }
-
-        long tiempoFin = System.currentTimeMillis();
-//        System.out.printf("Créditos cargados: %d entradas en %d ms%n", cantidad, (tiempoFin - tiempoInicio));
+        long fin = System.currentTimeMillis();
+        System.out.println("\nTiempo de demora de credits: " + (fin-inicio) + "ms\n");
     }
 
     private MyList<String> verifyActores(String entrada) {

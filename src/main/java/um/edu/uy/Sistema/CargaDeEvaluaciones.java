@@ -15,8 +15,10 @@ import java.util.Date;
 public class CargaDeEvaluaciones {
     private CSVReader lectorCSV;
     private String[] lineaDatos;
+    private boolean developer;
 
-    public CargaDeEvaluaciones() {
+    public CargaDeEvaluaciones(boolean developer) {
+        this.developer = developer;
         try{
             InputStream archivoDatos = CargaDePeliculas.class.getResourceAsStream("/ratings_1mm.csv");
             BufferedReader bufferLectura = new BufferedReader(new InputStreamReader(archivoDatos));
@@ -28,21 +30,22 @@ public class CargaDeEvaluaciones {
     }
 
     public void cargarDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
-        long tiempoInicio = System.currentTimeMillis();
-        int cantidad = 0;
-        long tiempoRecorrido = 0;
-        long tiempoBusqueda = 0;
-        long tiempoInsercion = 0;
+        if (developer){
+            cargarDatosDev(peliculas);
+        } else {
+            cargarDatosNoDev(peliculas);
+        }
+    }
 
+    private void cargarDatosNoDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
         System.out.println("Iniciando carga de evaluaciones...");
 
         while ((lineaDatos = lectorCSV.readNext()) != null) {
-            long t0 = System.nanoTime();
-
             int idUsuario;
             Date fecha;
-            Integer idPelicula;
+            int idPelicula;
             float calificacion;
+
             try {
                 idUsuario = Integer.parseInt(lineaDatos[0]);
                 idPelicula = Integer.parseInt(lineaDatos[1]);
@@ -50,35 +53,44 @@ public class CargaDeEvaluaciones {
                 fecha = new Date(Long.parseLong(lineaDatos[3])*1000);
             } catch (Exception e) {continue;}
 
-            long t1 = System.nanoTime();
 
             if (idUsuario >= 0) {
-                long t2 = System.nanoTime();
                 Pelicula pelicula = peliculas.get(idPelicula);
-                long t3 = System.nanoTime();
 
                 if (pelicula != null) {
                     pelicula.agregarEvaluacion(new Evaluacion(idUsuario, calificacion, fecha));
                 }
-
-                long t4 = System.nanoTime();
-
-                tiempoRecorrido += (t1 - t0);
-                tiempoBusqueda += (t3 - t2);
-                tiempoInsercion += (t4 - t3);
-                cantidad++;
             }
         }
-
-        long tiempoFin = System.currentTimeMillis();
-//        mostrarEstadisticasCarga(tiempoInicio, tiempoInsercion, tiempoFin, tiempoBusqueda, tiempoRecorrido, cantidad);
     }
 
-    private void mostrarEstadisticasCarga(long tiempoInicio, long tiempoInsercion, long tiempoFin, long tiempoBusqueda, long tiempoRecorrido, long cantidad){
-        System.out.println("===== ESTADISTICAS DE CARGA DE EVALUACIONES =====");
-        System.out.println("Total: " + (tiempoFin - tiempoInicio) + " ms");
-        System.out.println("Promedio de recorrido por línea: " + tiempoRecorrido / cantidad / 1_000_000.0 + " ms");
-        System.out.println("Promedio búsqueda en hash: " + tiempoBusqueda / cantidad / 1_000_000.0 + " ms");
-        System.out.println("Promedio inserción en película: " + tiempoInsercion / cantidad / 1_000_000.0 + " ms");
+    private void cargarDatosDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
+        long inicio = System.currentTimeMillis();
+        System.out.println("Iniciando carga de evaluaciones...");
+
+        while ((lineaDatos = lectorCSV.readNext()) != null) {
+            int idUsuario;
+            Date fecha;
+            int idPelicula;
+            float calificacion;
+
+            try {
+                idUsuario = Integer.parseInt(lineaDatos[0]);
+                idPelicula = Integer.parseInt(lineaDatos[1]);
+                calificacion = Float.parseFloat(lineaDatos[2]);
+                fecha = new Date(Long.parseLong(lineaDatos[3])*1000);
+            } catch (Exception e) {continue;}
+
+
+            if (idUsuario >= 0) {
+                Pelicula pelicula = peliculas.get(idPelicula);
+
+                if (pelicula != null) {
+                    pelicula.agregarEvaluacion(new Evaluacion(idUsuario, calificacion, fecha));
+                }
+            }
+        }
+        long fin = System.currentTimeMillis();
+        System.out.println("\nTiempo de carga de ratings_1mm: " + (fin-inicio) + "ms\n");
     }
 }

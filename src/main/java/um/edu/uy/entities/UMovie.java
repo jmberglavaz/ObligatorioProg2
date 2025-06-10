@@ -106,7 +106,16 @@ public class UMovie {
             case 3 -> {
                 System.out.println("Saliendo del sistema...");
                 return false;
-            }default -> System.out.println(errorPrincipal);
+            }
+            case 71 -> {
+                if(!datosCargados){
+                    cargarDatosDeveloper();
+                    datosCargados = true;
+                } else {
+                    System.out.println("Los datos ya estan cargados.");
+                }
+            }
+            default -> System.out.println(errorPrincipal);
         }
         return true;
     }
@@ -144,9 +153,9 @@ public class UMovie {
     }
 
     private void cargarDatos(){
-        CargaDePeliculas cargaPeliculas = new CargaDePeliculas();
-        CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones();
-        CargaDeStaff cargaDeStaff = new CargaDeStaff();
+        CargaDePeliculas cargaPeliculas = new CargaDePeliculas(false);
+        CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones(false);
+        CargaDeStaff cargaDeStaff = new CargaDeStaff(false);
 
         this.peliculas = cargaPeliculas.getPeliculas();
         this.generos = cargaPeliculas.getGeneros();
@@ -164,5 +173,31 @@ public class UMovie {
             this.directores = cargaDeStaff.getDirectores();
         } catch (Exception ignored) {}
         System.out.println("Carga de creditos completada.");
+    }
+
+    private void cargarDatosDeveloper(){
+        long inicio = System.currentTimeMillis();
+        CargaDePeliculas cargaPeliculas = new CargaDePeliculas(true);
+        CargaDeEvaluaciones cargaEvaluaciones = new CargaDeEvaluaciones(true);
+        CargaDeStaff cargaDeStaff = new CargaDeStaff(true);
+
+        this.peliculas = cargaPeliculas.getPeliculas();
+        this.generos = cargaPeliculas.getGeneros();
+        this.idiomas = cargaPeliculas.getIdiomas();
+        this.colecciones = cargaPeliculas.getColecciones();
+        System.out.println("Carga de peliculas completada");
+
+        try {
+            cargaEvaluaciones.cargarDatos(peliculas);
+        } catch (Exception ignored) {}
+        System.out.println("Carga de evaluaciones completada.");
+
+        try {
+            cargaDeStaff.cargaDeDatos(peliculas);
+            this.directores = cargaDeStaff.getDirectores();
+        } catch (Exception ignored) {}
+        System.out.println("Carga de creditos completada.");
+        long fin = System.currentTimeMillis();
+        System.out.println("Tiempo de carga: " + (fin-inicio) + "ms");
     }
 }

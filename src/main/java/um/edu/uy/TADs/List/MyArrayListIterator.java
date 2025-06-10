@@ -5,11 +5,10 @@ import java.util.NoSuchElementException;
 
 public class MyArrayListIterator<T> implements Iterator<T> {
 
-    private final T[] array;           // Referencia al array interno del ArrayList
-    private final int size;            // Tamaño actual del ArrayList
-    private int currentIndex;    // Índice actual del iterador
+    private final T[] array;
+    private final int size;
+    private int currentIndex;
 
-    // Constructor que recibe el array y el tamaño del ArrayList
     public MyArrayListIterator(T[] array, int size) {
         this.array = array;
         this.size = size;

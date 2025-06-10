@@ -21,14 +21,16 @@ import um.edu.uy.entities.Pelicula;
 
 public class CargaDePeliculas {
     private CSVReader lectorCSV;
-    private MyHash<Integer, Pelicula> peliculas;
-    private MyHash<Integer, Genero> generos;
-    private MyHash<String, Idioma> idiomas;
-    private MyHash<Integer, Coleccion> colecciones;
+    private boolean developer;
+    private final MyHash<Integer, Pelicula> peliculas;
+    private final MyHash<Integer, Genero> generos;
+    private final MyHash<String, Idioma> idiomas;
+    private final MyHash<Integer, Coleccion> colecciones;
     private final Pattern patternColeccion = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
     private final Pattern patternGenero = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
 
-    public CargaDePeliculas(){
+    public CargaDePeliculas(boolean developer){
+        this.developer = developer;
         try{
             InputStream direccionArchivoDatos = CargaDePeliculas.class.getResourceAsStream("/movies_metadata.csv");
             this.lectorCSV = new CSVReader(new InputStreamReader(direccionArchivoDatos));
@@ -49,20 +51,23 @@ public class CargaDePeliculas {
         }
     }
 
-    public void cargarDatos() throws IOException, CsvValidationException {
-        long inicio = System.currentTimeMillis();
-        int peliculasProcesadas = 0;
-        int peliculasValidas = 0;
+    public void cargarDatos () throws CsvValidationException, IOException {
+        if (developer){
+            cargarDatosDev();
+        } else {
+            cargarDatosNoDev();
+        }
+    }
 
+    private void cargarDatosNoDev() throws IOException, CsvValidationException {
         System.out.println("Iniciando carga de peliculas...");
+
         String[] dataLine;
         while ((dataLine = lectorCSV.readNext()) != null) {
-            peliculasProcesadas++;
 
             int idPelicula;
             try {
                 idPelicula = Integer.parseInt(dataLine[5]);
-                peliculasValidas++;
             } catch (NumberFormatException e) {
                 continue;
             }
@@ -100,10 +105,6 @@ public class CargaDePeliculas {
                     idioma = idiomas.get(acronimoIdioma);
                     idioma.agregarPelicula(idPelicula);
                 }
-//                if (acronimoIdioma.equals("pt")){
-//                    System.out.println(acronimoIdioma);
-//                    System.out.println(dataLine[8]);
-//                }
             }
 
             Coleccion coleccion = searchColecciones(dataLine[1]);
@@ -117,9 +118,70 @@ public class CargaDePeliculas {
                 }
             }
         }
+    }
 
+    private void cargarDatosDev() throws IOException, CsvValidationException {
+        long inicio = System.currentTimeMillis();
+        System.out.println("Iniciando carga de peliculas...");
+
+        String[] dataLine;
+        while ((dataLine = lectorCSV.readNext()) != null) {
+
+            int idPelicula;
+            try {
+                idPelicula = Integer.parseInt(dataLine[5]);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            long ganancias = 0;
+            try {
+                ganancias = Long.parseLong(dataLine[13]);
+            } catch (NumberFormatException ignored) {}
+
+            Pelicula pelicula = new Pelicula(idPelicula, dataLine[8], dataLine[12], ganancias);
+            try {
+                peliculas.insert(idPelicula, pelicula);
+            } catch (ElementAlreadyExist ignored) {
+                continue;
+            }
+
+            MyList<Genero> listaGeneros = searchGeneros(dataLine[3]);
+            for (Genero genero : listaGeneros) {
+                try{
+                    this.generos.insert(genero.getId(), genero);
+                    genero.agregarPelicula(idPelicula);
+                } catch (ElementAlreadyExist ignored) {
+                    genero = generos.get(genero.getId());
+                    genero.agregarPelicula(idPelicula);
+                }
+            }
+
+            String acronimoIdioma = dataLine[7];
+            if (acronimoIdioma != null && !acronimoIdioma.trim().isEmpty()) {
+                Idioma idioma = new Idioma(acronimoIdioma);
+                try {
+                    idiomas.insert(acronimoIdioma, idioma);
+                    idioma.agregarPelicula(idPelicula);
+                } catch (ElementAlreadyExist ignored) {
+                    idioma = idiomas.get(acronimoIdioma);
+                    idioma.agregarPelicula(idPelicula);
+                }
+            }
+
+            Coleccion coleccion = searchColecciones(dataLine[1]);
+            if (coleccion != null){
+                try {
+                    colecciones.insert(coleccion.getId(), coleccion);
+                    coleccion.agregarPelicula(idPelicula);
+                } catch (ElementAlreadyExist ignored) {
+                    coleccion = colecciones.get(coleccion.getId());
+                    coleccion.agregarPelicula(idPelicula);
+                }
+            }
+        }
         long fin = System.currentTimeMillis();
-        //mostrarEstadisticasCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
+        System.out.println("\nTiempo de carga de movies_metadata: " + (fin-inicio) + "ms\n");
     }
 
     public MyHash<Integer, Pelicula> getPeliculas() {
@@ -171,15 +233,5 @@ public class CargaDePeliculas {
             }
         }
         return null;
-    }
-
-    private void mostrarEstadisticasCarga(long inicio, long fin, int peliculasProcesadas, int peliculasValidas){
-        System.out.println("\n=== ESTADISTICAS DE CARGA DE PELICULAS ===");
-        System.out.println("Tiempo total de carga: " + (fin - inicio) + " ms");
-        System.out.println("Peliculas procesadas: " + peliculasProcesadas);
-        System.out.println("Peliculas validas cargadas: " + peliculasValidas);
-        System.out.println("Generos unicos: " + generos.size());
-        System.out.println("Idiomas unicos: " + idiomas.size());
-        System.out.println("Colecciones unicas: " + colecciones.size());
     }
 }
