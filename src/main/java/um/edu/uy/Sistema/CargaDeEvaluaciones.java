@@ -30,14 +30,7 @@ public class CargaDeEvaluaciones {
     }
 
     public void cargarDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
-        if (developer){
-            cargarDatosDev(peliculas);
-        } else {
-            cargarDatosNoDev(peliculas);
-        }
-    }
-
-    private void cargarDatosNoDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
+        long inicio = developer ? System.currentTimeMillis() : 0;
         System.out.println("Iniciando carga de evaluaciones...");
 
         while ((lineaDatos = lectorCSV.readNext()) != null) {
@@ -62,35 +55,9 @@ public class CargaDeEvaluaciones {
                 }
             }
         }
-    }
-
-    private void cargarDatosDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
-        long inicio = System.currentTimeMillis();
-        System.out.println("Iniciando carga de evaluaciones...");
-
-        while ((lineaDatos = lectorCSV.readNext()) != null) {
-            int idUsuario;
-            Date fecha;
-            int idPelicula;
-            float calificacion;
-
-            try {
-                idUsuario = Integer.parseInt(lineaDatos[0]);
-                idPelicula = Integer.parseInt(lineaDatos[1]);
-                calificacion = Float.parseFloat(lineaDatos[2]);
-                fecha = new Date(Long.parseLong(lineaDatos[3])*1000);
-            } catch (Exception e) {continue;}
-
-
-            if (idUsuario >= 0) {
-                Pelicula pelicula = peliculas.get(idPelicula);
-
-                if (pelicula != null) {
-                    pelicula.agregarEvaluacion(new Evaluacion(idUsuario, calificacion, fecha));
-                }
-            }
+        if(developer){
+            long fin = System.currentTimeMillis();
+            System.out.println("\nTiempo de carga de ratings_1mm: " + (fin - inicio) + "ms\n");
         }
-        long fin = System.currentTimeMillis();
-        System.out.println("\nTiempo de carga de ratings_1mm: " + (fin-inicio) + "ms\n");
     }
 }

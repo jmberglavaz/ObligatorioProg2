@@ -39,14 +39,7 @@ public class CargaDeStaff {
     }
 
     public void cargaDeDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
-        if (developer){
-            cargaDeDatosDev(peliculas);
-        } else {
-            cargaDeDatosNoDev(peliculas);
-        }
-    }
-
-    private void cargaDeDatosNoDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
+        long inicio = developer ? System.currentTimeMillis() : 0;
         System.out.println("Iniciando carga de créditos...");
 
         String[] lineaDatos;
@@ -73,39 +66,11 @@ public class CargaDeStaff {
                 agregarDirectores(equipoRaw, idPelicula);
             }
         }
-    }
 
-
-    private void cargaDeDatosDev(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
-        long inicio = System.currentTimeMillis();
-        System.out.println("Iniciando carga de créditos...");
-
-        String[] lineaDatos;
-        while ((lineaDatos = readerCSV.readNext()) != null) {
-            if (lineaDatos.length < 3) continue;
-
-            int idPelicula;
-            try {
-                idPelicula = Integer.parseInt(lineaDatos[2]);
-            } catch (NumberFormatException e) {
-                continue;
-            }
-
-            Pelicula pelicula = peliculas.get(idPelicula);
-            if (pelicula == null) continue;
-
-            String actoresRaw = lineaDatos[0];
-            if (actoresRaw != null && !actoresRaw.isEmpty()) {
-                pelicula.setListaDeActores(verifyActores(actoresRaw));
-            }
-
-            String equipoRaw = lineaDatos[1];
-            if (equipoRaw != null && equipoRaw.contains("Director")) {
-                agregarDirectores(equipoRaw, idPelicula);
-            }
+        if (developer) {
+            long fin = System.currentTimeMillis();
+            System.out.println("\nTiempo de demora de credits: " + (fin - inicio) + "ms\n");
         }
-        long fin = System.currentTimeMillis();
-        System.out.println("\nTiempo de demora de credits: " + (fin-inicio) + "ms\n");
     }
 
     private MyList<String> verifyActores(String entrada) {

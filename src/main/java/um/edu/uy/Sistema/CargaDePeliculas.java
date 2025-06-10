@@ -52,137 +52,71 @@ public class CargaDePeliculas {
     }
 
     public void cargarDatos () throws CsvValidationException, IOException {
+        long inicio = developer ? System.currentTimeMillis() : 0;
+        System.out.println("Iniciando carga de peliculas...");
+
+        String[] dataLine;
+        while ((dataLine = lectorCSV.readNext()) != null) {
+
+            int idPelicula;
+            try {
+                idPelicula = Integer.parseInt(dataLine[5]);
+            } catch (NumberFormatException e) {
+                continue;
+            }
+
+            long ganancias = 0;
+            try {
+                ganancias = Long.parseLong(dataLine[13]);
+            } catch (NumberFormatException ignored) {}
+
+            Pelicula pelicula = new Pelicula(idPelicula, dataLine[8], dataLine[12], ganancias);
+            try {
+                peliculas.insert(idPelicula, pelicula);
+            } catch (ElementAlreadyExist ignored) {
+                continue;
+            }
+
+            MyList<Genero> listaGeneros = searchGeneros(dataLine[3]);
+            for (Genero genero : listaGeneros) {
+                try{
+                    this.generos.insert(genero.getId(), genero);
+                    genero.agregarPelicula(idPelicula);
+                } catch (ElementAlreadyExist ignored) {
+                    genero = generos.get(genero.getId());
+                    genero.agregarPelicula(idPelicula);
+                }
+            }
+
+            String acronimoIdioma = dataLine[7];
+            if (acronimoIdioma != null && !acronimoIdioma.trim().isEmpty()) {
+                Idioma idioma = new Idioma(acronimoIdioma);
+                try {
+                    idiomas.insert(acronimoIdioma, idioma);
+                    idioma.agregarPelicula(idPelicula);
+                } catch (ElementAlreadyExist ignored) {
+                    idioma = idiomas.get(acronimoIdioma);
+                    idioma.agregarPelicula(idPelicula);
+                }
+            }
+
+            Coleccion coleccion = searchColecciones(dataLine[1]);
+            if (coleccion != null){
+                try {
+                    colecciones.insert(coleccion.getId(), coleccion);
+                    coleccion.agregarPelicula(idPelicula);
+                } catch (ElementAlreadyExist ignored) {
+                    coleccion = colecciones.get(coleccion.getId());
+                    coleccion.agregarPelicula(idPelicula);
+                }
+            }
+        }
         if (developer){
-            cargarDatosDev();
-        } else {
-            cargarDatosNoDev();
+            long fin = System.currentTimeMillis();
+            System.out.println("\nTiempo de carga de movies_metadata: " + (fin - inicio) + "ms\n");
         }
     }
 
-    private void cargarDatosNoDev() throws IOException, CsvValidationException {
-        System.out.println("Iniciando carga de peliculas...");
-
-        String[] dataLine;
-        while ((dataLine = lectorCSV.readNext()) != null) {
-
-            int idPelicula;
-            try {
-                idPelicula = Integer.parseInt(dataLine[5]);
-            } catch (NumberFormatException e) {
-                continue;
-            }
-
-            long ganancias = 0;
-            try {
-                ganancias = Long.parseLong(dataLine[13]);
-            } catch (NumberFormatException ignored) {}
-
-            Pelicula pelicula = new Pelicula(idPelicula, dataLine[8], dataLine[12], ganancias);
-            try {
-                peliculas.insert(idPelicula, pelicula);
-            } catch (ElementAlreadyExist ignored) {
-                continue;
-            }
-
-            MyList<Genero> listaGeneros = searchGeneros(dataLine[3]);
-            for (Genero genero : listaGeneros) {
-                try{
-                    this.generos.insert(genero.getId(), genero);
-                    genero.agregarPelicula(idPelicula);
-                } catch (ElementAlreadyExist ignored) {
-                    genero = generos.get(genero.getId());
-                    genero.agregarPelicula(idPelicula);
-                }
-            }
-
-            String acronimoIdioma = dataLine[7];
-            if (acronimoIdioma != null && !acronimoIdioma.trim().isEmpty()) {
-                Idioma idioma = new Idioma(acronimoIdioma);
-                try {
-                    idiomas.insert(acronimoIdioma, idioma);
-                    idioma.agregarPelicula(idPelicula);
-                } catch (ElementAlreadyExist ignored) {
-                    idioma = idiomas.get(acronimoIdioma);
-                    idioma.agregarPelicula(idPelicula);
-                }
-            }
-
-            Coleccion coleccion = searchColecciones(dataLine[1]);
-            if (coleccion != null){
-                try {
-                    colecciones.insert(coleccion.getId(), coleccion);
-                    coleccion.agregarPelicula(idPelicula);
-                } catch (ElementAlreadyExist ignored) {
-                    coleccion = colecciones.get(coleccion.getId());
-                    coleccion.agregarPelicula(idPelicula);
-                }
-            }
-        }
-    }
-
-    private void cargarDatosDev() throws IOException, CsvValidationException {
-        long inicio = System.currentTimeMillis();
-        System.out.println("Iniciando carga de peliculas...");
-
-        String[] dataLine;
-        while ((dataLine = lectorCSV.readNext()) != null) {
-
-            int idPelicula;
-            try {
-                idPelicula = Integer.parseInt(dataLine[5]);
-            } catch (NumberFormatException e) {
-                continue;
-            }
-
-            long ganancias = 0;
-            try {
-                ganancias = Long.parseLong(dataLine[13]);
-            } catch (NumberFormatException ignored) {}
-
-            Pelicula pelicula = new Pelicula(idPelicula, dataLine[8], dataLine[12], ganancias);
-            try {
-                peliculas.insert(idPelicula, pelicula);
-            } catch (ElementAlreadyExist ignored) {
-                continue;
-            }
-
-            MyList<Genero> listaGeneros = searchGeneros(dataLine[3]);
-            for (Genero genero : listaGeneros) {
-                try{
-                    this.generos.insert(genero.getId(), genero);
-                    genero.agregarPelicula(idPelicula);
-                } catch (ElementAlreadyExist ignored) {
-                    genero = generos.get(genero.getId());
-                    genero.agregarPelicula(idPelicula);
-                }
-            }
-
-            String acronimoIdioma = dataLine[7];
-            if (acronimoIdioma != null && !acronimoIdioma.trim().isEmpty()) {
-                Idioma idioma = new Idioma(acronimoIdioma);
-                try {
-                    idiomas.insert(acronimoIdioma, idioma);
-                    idioma.agregarPelicula(idPelicula);
-                } catch (ElementAlreadyExist ignored) {
-                    idioma = idiomas.get(acronimoIdioma);
-                    idioma.agregarPelicula(idPelicula);
-                }
-            }
-
-            Coleccion coleccion = searchColecciones(dataLine[1]);
-            if (coleccion != null){
-                try {
-                    colecciones.insert(coleccion.getId(), coleccion);
-                    coleccion.agregarPelicula(idPelicula);
-                } catch (ElementAlreadyExist ignored) {
-                    coleccion = colecciones.get(coleccion.getId());
-                    coleccion.agregarPelicula(idPelicula);
-                }
-            }
-        }
-        long fin = System.currentTimeMillis();
-        System.out.println("\nTiempo de carga de movies_metadata: " + (fin-inicio) + "ms\n");
-    }
 
     public MyHash<Integer, Pelicula> getPeliculas() {
         return peliculas;
