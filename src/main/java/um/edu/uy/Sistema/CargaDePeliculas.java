@@ -21,20 +21,23 @@ import um.edu.uy.entities.Pelicula;
 
 public class CargaDePeliculas {
     private CSVReader lectorCSV;
-    private MyHash<Integer, Pelicula> peliculas;
-    private MyHash<Integer, Genero> generos;
-    private MyHash<String, Idioma> idiomas;
-    private MyHash<Integer, Coleccion> colecciones;
+    private final boolean developerMode; // Si se quiere usar el modo desarrollador, se puede cambiar a true para imprimir mas detalles
+    private final MyHash<Integer, Pelicula> peliculas;
+    private final MyHash<Integer, Genero> generos;
+    private final MyHash<String, Idioma> idiomas;
+    private final MyHash<Integer, Coleccion> colecciones;
     private final Pattern patternColeccion = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
     private final Pattern patternGenero = Pattern.compile("'id':\\s*(\\d+),\\s*'name':\\s*'([^']+)'");
 
-    public CargaDePeliculas(){
+    public CargaDePeliculas(boolean developerMode) {
+        this.developerMode = developerMode;
         try{
             InputStream direccionArchivoDatos = CargaDePeliculas.class.getResourceAsStream("/movies_metadata.csv");
+            assert direccionArchivoDatos != null;
             this.lectorCSV = new CSVReader(new InputStreamReader(direccionArchivoDatos));
             lectorCSV.readNext(); // Se lee la primera línea (cabecera) y se descarta
-        } catch (IOException | CsvValidationException e) {
-            e.printStackTrace(); //No deberia de ocurrir, pero si ocurre, se imprime el error
+        } catch (IOException | CsvValidationException ignored) { //No deberia de ocurrir, pero si ocurre, se imprime el error
+            System.out.println("Error critico al cargar el archivo de peliculas. Asegurese de que el archivo movies_metadata.csv se encuentre en la carpeta resources del proyecto.");
         }
 
         this.peliculas = new MyHashImplCloseLineal<>(59999);
@@ -50,19 +53,15 @@ public class CargaDePeliculas {
     }
 
     public void cargarDatos() throws IOException, CsvValidationException {
-        long inicio = System.currentTimeMillis();
-        int peliculasProcesadas = 0;
-        int peliculasValidas = 0;
+        long inicio = developerMode ? System.currentTimeMillis() : 0;
 
         System.out.println("Iniciando carga de peliculas...");
         String[] dataLine;
         while ((dataLine = lectorCSV.readNext()) != null) {
-            peliculasProcesadas++;
 
             int idPelicula;
             try {
                 idPelicula = Integer.parseInt(dataLine[5]);
-                peliculasValidas++;
             } catch (NumberFormatException e) {
                 continue;
             }
@@ -100,10 +99,6 @@ public class CargaDePeliculas {
                     idioma = idiomas.get(acronimoIdioma);
                     idioma.agregarPelicula(idPelicula);
                 }
-//                if (acronimoIdioma.equals("pt")){
-//                    System.out.println(acronimoIdioma);
-//                    System.out.println(dataLine[8]);
-//                }
             }
 
             Coleccion coleccion = searchColecciones(dataLine[1]);
@@ -118,8 +113,10 @@ public class CargaDePeliculas {
             }
         }
 
-        long fin = System.currentTimeMillis();
-        //mostrarEstadisticasCarga(inicio, fin, peliculasProcesadas, peliculasValidas);
+        if (developerMode) {
+            mostrarEstadisticasCarga(inicio, System.currentTimeMillis());
+        }
+
     }
 
     public MyHash<Integer, Pelicula> getPeliculas() {
@@ -153,6 +150,7 @@ public class CargaDePeliculas {
             } catch (NumberFormatException ignored) {}
         }
         return listaGeneros;
+
     }
 
     private Coleccion searchColecciones(String entrada){
@@ -173,13 +171,14 @@ public class CargaDePeliculas {
         return null;
     }
 
-    private void mostrarEstadisticasCarga(long inicio, long fin, int peliculasProcesadas, int peliculasValidas){
+    private void mostrarEstadisticasCarga(long inicio, long fin){
         System.out.println("\n=== ESTADISTICAS DE CARGA DE PELICULAS ===");
         System.out.println("Tiempo total de carga: " + (fin - inicio) + " ms");
-        System.out.println("Peliculas procesadas: " + peliculasProcesadas);
-        System.out.println("Peliculas validas cargadas: " + peliculasValidas);
+        System.out.println("Peliculas procesadas: " + (lectorCSV.getRecordsRead()-1));
+        System.out.println("Peliculas validas cargadas: " + peliculas.size());
         System.out.println("Generos unicos: " + generos.size());
         System.out.println("Idiomas unicos: " + idiomas.size());
         System.out.println("Colecciones unicas: " + colecciones.size());
+        System.out.println("========================================\n");
     }
 }

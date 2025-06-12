@@ -6,12 +6,10 @@ import um.edu.uy.TADs.Sorting;
 
 public class Director {
     private String nombre;
-    private int id;
-    private MyList<Integer> listaPeliculas;
+    private final MyList<Integer> listaPeliculas;
 
-    public Director(String nombre, int id) {
+    public Director(String nombre) {
         this.nombre = nombre;
-        this.id = id;
         this.listaPeliculas = new MyLinkedListImpl<>();
     }
 
@@ -27,16 +25,7 @@ public class Director {
         return listaPeliculas;
     }
 
-    public void setListaPeliculas(MyList<Integer> listaPeliculas) {
-        this.listaPeliculas = listaPeliculas;
+    public void agregarPelicula(int idPelicula) {
+        this.listaPeliculas.add(idPelicula);
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
 }
