@@ -36,6 +36,25 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
     }
 
     @Override
+    public HeapNode<K, T> deleteAndObtainNode() throws EmptyHeapException {
+        if (isEmpty() || heap[0] == null) {
+            throw new EmptyHeapException("Heap vacío");
+        }
+
+        HeapNode<K, T> raiz = heap[0];
+
+        heap[0] = heap[size - 1];
+        heap[size - 1] = null;
+        size--;
+
+        if (size > 0) {
+            bajarNodo(0);
+        }
+
+        return raiz;
+    }
+
+    @Override
     public T deleteAndObtain() throws EmptyHeapException {
         if (isEmpty() || heap[0] == null) {
             throw new EmptyHeapException("Heap vacío");
@@ -52,6 +71,8 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
 
         return dataRaiz;
     }
+
+
 
     @Override
     public int size() {
