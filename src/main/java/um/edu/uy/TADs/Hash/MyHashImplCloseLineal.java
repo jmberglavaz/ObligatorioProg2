@@ -231,4 +231,6 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
 //        throw new NoSuchElementException("No hay siguiente elemento");
 //    }
 //}
+
+    public void forEach() {}
 }
