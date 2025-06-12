@@ -3,10 +3,9 @@ package um.edu.uy.Sistema;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import um.edu.uy.Exceptions.ElementAlreadyExist;
-import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
 import um.edu.uy.TADs.Hash.MyHashImplCloseLineal;
 import um.edu.uy.TADs.Hash.MyHash;
-import um.edu.uy.TADs.List.MyList;
+import um.edu.uy.entities.Actor;
 import um.edu.uy.entities.Director;
 import um.edu.uy.entities.Pelicula;
 
@@ -16,38 +15,43 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class CargaDeStaff {
-    private CSVReader readerCSV;
-    private final MyHash<Integer, Director> directores;
+    private CSVReader lectorCSV;
+    private final boolean developerMode; // Si se quiere usar el modo desarrollador, se puede cambiar a true para imprimir mas detalles
+    private final MyHash<String, Director> directores;
+    private final MyHash<String, Actor> actores;
 
-    private static final String TRABAJO_DIRECTOR = "\"job\": \"Director\"";
-    private static final String CLAVE_NOMBRE = "\"name\": \"";
-    private static final String CLAVE_ID = "\"id\": ";
-    private static final String CLAVE_NOMBRE_ACTOR = "'name': '"; //Se usa una distinta respecto a director por formatos distinos
+    private static final String TRABAJO_DIRECTOR = "'job': 'Director'";
+    private static final String CLAVE_NOMBRE = "'name': '";
+    private static final String CLAVE_NOMBRE_ACTOR = "'name': '"; //Se usa una distinta respecto a director por formatos distintos
 
-    public CargaDeStaff() {
-        this.directores = new MyHashImplCloseLineal<>(60000);
+    public CargaDeStaff(boolean developerMode) {
+        this.developerMode = developerMode;
+        this.directores = new MyHashImplCloseLineal<>(59999);
+        this.actores = new MyHashImplCloseLineal<>(59999);
+
         try {
-            InputStream archivoDatos = CargaDePeliculas.class.getResourceAsStream("/credits.csv");
-            BufferedReader bufferLectura = new BufferedReader(new InputStreamReader(archivoDatos));
-            this.readerCSV = new CSVReader(bufferLectura);
-            this.readerCSV.readNext();
-        } catch (IOException | CsvValidationException e) {
-            e.printStackTrace();
+            InputStream direccionArchivoDatos = CargaDeStaff.class.getResourceAsStream("/credits.csv");
+            assert direccionArchivoDatos != null;
+            BufferedReader bufferLectura = new BufferedReader(new InputStreamReader(direccionArchivoDatos));
+            this.lectorCSV = new CSVReader(bufferLectura);
+            this.lectorCSV.readNext(); // Se lee la primera línea (cabecera) y se descarta
+        } catch (IOException | CsvValidationException ignored) { //No deberia de ocurrir, pero si ocurre, se imprime el error
+            System.out.println("Error crítico al cargar el archivo de créditos. Asegúrese de que el archivo credits.csv se encuentre en la carpeta resources del proyecto.");
         }
     }
 
-    public void cargaDeDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
-        System.out.println("Iniciando carga de créditos...");
-        long tiempoInicio = System.currentTimeMillis();
-        int cantidad = 0;
+    public void cargarDatos(MyHash<Integer, Pelicula> peliculas) throws CsvValidationException, IOException {
+        long inicio = developerMode ? System.currentTimeMillis() : 0;
 
-        String[] lineaDatos;
-        while ((lineaDatos = readerCSV.readNext()) != null) {
-            if (lineaDatos.length < 3) continue;
+        System.out.println("Iniciando carga de créditos...");
+
+        String[] dataLine;
+        while ((dataLine = lectorCSV.readNext()) != null) {
+            if (dataLine.length < 3) continue;
 
             int idPelicula;
             try {
-                idPelicula = Integer.parseInt(lineaDatos[2]);
+                idPelicula = Integer.parseInt(dataLine[2]);
             } catch (NumberFormatException e) {
                 continue;
             }
@@ -55,36 +59,34 @@ public class CargaDeStaff {
             Pelicula pelicula = peliculas.get(idPelicula);
             if (pelicula == null) continue;
 
-            String actoresRaw = lineaDatos[0];
+            String actoresRaw = dataLine[0];
             if (actoresRaw != null && !actoresRaw.isEmpty()) {
-                pelicula.setListaDeActores(verifyActores(actoresRaw));
+                procesarActores(actoresRaw, idPelicula);
             }
 
-//            if (cantidad % 5000 == 0){
-//                System.out.println("Lista de actores para la película: " + pelicula.getTitulo() + "\n");
-//                for (String actor : pelicula.getListaDeActores()) {
-//                    System.out.println("Actor: " + actor);
-//                }
-//            }
-
-            String equipoRaw = lineaDatos[1];
+            String equipoRaw = dataLine[1];
             if (equipoRaw != null && equipoRaw.contains("Director")) {
-                agregarDirectores(equipoRaw, idPelicula);
+                procesarDirectores(equipoRaw, idPelicula);
             }
-
-            cantidad++;
         }
 
-        long tiempoFin = System.currentTimeMillis();
-//        System.out.printf("Créditos cargados: %d entradas en %d ms%n", cantidad, (tiempoFin - tiempoInicio));
+        if (developerMode) {
+            mostrarEstadisticasCarga(inicio, System.currentTimeMillis());
+        }
     }
 
-    private MyList<String> verifyActores(String entrada) {
-        MyList<String> actores = new MyLinkedListImpl<>();
-        MyHash<String, Boolean> actoresVistos = new MyHashImplCloseLineal<>(100);
+    public MyHash<String, Director> getDirectores() {
+        return directores;
+    }
 
+    public MyHash<String, Actor> getActores() {
+        return actores;
+    }
+
+    private void procesarActores(String entrada, int idPelicula) {
         int posicionInicial = 0;
         int longitud = entrada.length();
+        MyHash<String, Boolean> actoresVistos = new MyHashImplCloseLineal<>(100);
 
         while (posicionInicial < longitud) {
             int inicioNombre = entrada.indexOf(CLAVE_NOMBRE_ACTOR, posicionInicial);
@@ -103,46 +105,26 @@ public class CargaDeStaff {
             if (nombreActor.length() >= 3 && actoresVistos.get(nombreActor) == null) {
                 try {
                     actoresVistos.insert(nombreActor, true);
-                    actores.add(nombreActor);
+                    Actor actor = actores.get(nombreActor);
+                    if (actor == null) {
+                        actor = new Actor(nombreActor);
+                        actores.insert(nombreActor, actor);
+                    }
+                    actor.agregarPelicula(idPelicula);
                 } catch (ElementAlreadyExist ignored) {}
             }
 
             posicionInicial = finNombre + 1;
         }
-
-        return actores;
     }
 
-    private void agregarDirectores(String entrada, int idPelicula) {
+    private void procesarDirectores(String entrada, int idPelicula) {
         int posicionInicial = 0;
         int longitud = entrada.length();
 
         while (posicionInicial < longitud) {
             int posDirector = entrada.indexOf(TRABAJO_DIRECTOR, posicionInicial);
             if (posDirector == -1) break;
-
-            int posId = entrada.lastIndexOf(CLAVE_ID, posDirector);
-            if (posId == -1) {
-                posicionInicial = posDirector + TRABAJO_DIRECTOR.length();
-                continue;
-            }
-
-            int inicioId = posId + CLAVE_ID.length();
-            int finId = entrada.indexOf(",", inicioId);
-            if (finId == -1) finId = entrada.indexOf("}", inicioId);
-            if (finId == -1) {
-                posicionInicial = posDirector + TRABAJO_DIRECTOR.length();
-                continue;
-            }
-
-            int idDirector;
-            try {
-                String idStr = entrada.substring(inicioId, finId).trim();
-                idDirector = Integer.parseInt(idStr);
-            } catch (NumberFormatException e) {
-                posicionInicial = posDirector + TRABAJO_DIRECTOR.length();
-                continue;
-            }
 
             int posNombre = entrada.indexOf(CLAVE_NOMBRE, posDirector);
             if (posNombre == -1) {
@@ -160,11 +142,11 @@ public class CargaDeStaff {
             String nombreDirector = entrada.substring(inicioNombre, finNombre);
 
             try {
-                 Director director = new Director(nombreDirector, idDirector);
-                 directores.insert(idDirector, director);
-                 director.getListaPeliculas().add(idPelicula);
+                Director director = new Director(nombreDirector);
+                directores.insert(nombreDirector, director);
+                director.getListaPeliculas().add(idPelicula);
             } catch (ElementAlreadyExist ignored) {
-                Director director = directores.get(idDirector);
+                Director director = directores.get(nombreDirector);
                 if (director != null) { //Siempre se deberia cumplir esta condicion
                     director.getListaPeliculas().add(idPelicula);
                 }
@@ -174,7 +156,12 @@ public class CargaDeStaff {
         }
     }
 
-    public MyHash<Integer, Director> getDirectores() {
-        return directores;
+    private void mostrarEstadisticasCarga(long inicio, long fin) {
+        System.out.println("\n=== ESTADISTICAS DE CARGA DE CREDITOS ===");
+        System.out.println("Tiempo total de carga: " + (fin - inicio) + " ms");
+        System.out.println("Registros procesados: " + (lectorCSV.getRecordsRead() - 1));
+        System.out.println("Directores únicos: " + directores.size());
+        System.out.println("Actores únicos: " + actores.size());
+        System.out.println("========================================\n");
     }
 }
