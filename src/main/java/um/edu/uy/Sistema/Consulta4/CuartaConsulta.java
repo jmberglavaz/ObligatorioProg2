@@ -31,9 +31,15 @@ public class CuartaConsulta {
                 }
             }
 
-            if (evaluaciones.size() <= 100){continue;}
+            int largo = evaluaciones.size();
+            if (largo <= 100){continue;}
 
-
+            if (largo % 2 == 0){
+                mediana = (evaluaciones.get(largo/2) + evaluaciones.get((largo/2) + 1))/2;
+            } else {
+                mediana = evaluaciones.get((largo + 1)/2);
+            }
+            resultadoDirectores.insert(mediana,tempDirector);
         }
 
         System.out.println("Top 10 Directores con mejor calificacion");
