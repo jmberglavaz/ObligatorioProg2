@@ -40,4 +40,8 @@ public class Coleccion {
     public void agregarPelicula(int idPelicula){
         listaDePeliculas.add(idPelicula);
     }
+
+    public int getCantidadPeliculas(){
+        return listaDePeliculas.size();
+    }
 }
