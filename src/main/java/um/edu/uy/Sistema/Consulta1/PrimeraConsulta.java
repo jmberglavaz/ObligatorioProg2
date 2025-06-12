@@ -11,6 +11,7 @@ public class PrimeraConsulta {
     private static final String[] nombresIdiomas = {"Ingles", "Frances", "Italiano", "Español", "Portugues"};
 
     public static void realizarConsulta(MyHash<Integer, Pelicula> listaDePeliculas, MyHash<String, Idioma> listaDeIdiomas) {
+        long inicio = System.currentTimeMillis();
         for (int iter = 0; iter < idiomas.length; iter++) {
             String idioma = idiomas[iter];
             String nombreIdioma = nombresIdiomas[iter];
@@ -28,5 +29,7 @@ public class PrimeraConsulta {
                 count++;
             }
         }
+        long fin = System.currentTimeMillis();
+        System.out.println("\nTiempo de demora de la consulta: " + (fin - inicio) + "ms");
     }
 }

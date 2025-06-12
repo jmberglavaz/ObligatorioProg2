@@ -144,11 +144,11 @@ public class CargaDeStaff {
             try {
                 Director director = new Director(nombreDirector);
                 directores.insert(nombreDirector, director);
-                director.getListaPeliculas().add(idPelicula);
+                director.agregarPelicula(idPelicula);
             } catch (ElementAlreadyExist ignored) {
                 Director director = directores.get(nombreDirector);
                 if (director != null) { //Siempre se deberia cumplir esta condicion
-                    director.getListaPeliculas().add(idPelicula);
+                    director.agregarPelicula(idPelicula);
                 }
             }
 

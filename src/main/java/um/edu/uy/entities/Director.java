@@ -28,4 +28,8 @@ public class Director {
     public void agregarPelicula(int idPelicula) {
         this.listaPeliculas.add(idPelicula);
     }
+
+    public int getCantidadPeliculas(){
+        return listaPeliculas.size();
+    }
 }

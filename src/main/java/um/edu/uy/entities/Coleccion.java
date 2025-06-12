@@ -3,7 +3,7 @@ package um.edu.uy.entities;
 import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
 import um.edu.uy.TADs.List.MyList;
 
-public class Coleccion extends Comparable<Coleccion> {
+public class Coleccion{
     private int id;
     private String titulo;
     private MyList<Integer> listaDePeliculas;
