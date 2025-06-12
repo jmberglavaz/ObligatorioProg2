@@ -20,7 +20,7 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
     }
 
     @Override
-    public void insert(K key, T data) {
+    public void insert(K key, T data)  {
         if (key == null || data == null) {
             throw new IllegalArgumentException("Key y data no pueden ser nulos");
         }
@@ -79,7 +79,7 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
         return size;
     }
 
-    private void subirNodo(int posicion) {
+    private void subirNodo(int posicion)  {
         while (posicion > 0) {
             int posicionPadre = (posicion - 1) / 2;
 
@@ -92,24 +92,41 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
         }
     }
 
-    private void bajarNodo(int posicion) {
-        int hijoIzquierdo = 2 * posicion + 1;
-        while (hijoIzquierdo < size) {
-            hijoIzquierdo = 2 * posicion + 1;
+    private void bajarNodo(int posicion)  {
+        while (posicion < size) {
+            int hijoIzquierdo = 2 * posicion + 1;
             int hijoDerecho = 2 * posicion + 2;
             int hijoSeleccionado = hijoIzquierdo;
 
-            if (hijoDerecho < size) {
-                if (esMinHeap) {
-                    hijoSeleccionado = heap[hijoIzquierdo].getKey().compareTo(heap[hijoDerecho].getKey()) < 0 ?
-                            hijoIzquierdo : hijoDerecho;
-                } else {
-                    hijoSeleccionado = heap[hijoIzquierdo].getKey().compareTo(heap[hijoDerecho].getKey()) > 0 ?
-                            hijoIzquierdo : hijoDerecho;
+            if (hijoIzquierdo < size && heap[hijoIzquierdo] != null) {
+                if (debeIntercambiar(heap[posicion], heap[hijoIzquierdo])) {
+                    hijoSeleccionado = hijoIzquierdo;
+                }
+            }
+            if (hijoDerecho < size && heap[hijoDerecho] != null) {
+                if (debeIntercambiar(heap[hijoSeleccionado], heap[hijoDerecho])) {
+                    hijoSeleccionado = hijoDerecho;
                 }
             }
 
-            if (debeIntercambiar(heap[posicion], heap[hijoSeleccionado])) {
+
+//            if (hijoDerecho < size) {
+//                if (esMinHeap) {
+//                    hijoSeleccionado = heap[hijoIzquierdo].compareTo(heap[hijoDerecho]) < 0 ?
+//                            hijoIzquierdo : hijoDerecho;
+//                } else {
+//                    hijoSeleccionado = heap[hijoIzquierdo].compareTo(heap[hijoDerecho]) > 0 ?
+//                            hijoIzquierdo : hijoDerecho;
+//                }
+//            }
+
+//            if (debeIntercambiar(heap[posicion], heap[hijoSeleccionado])) {
+//                intercambiarNodos(posicion, hijoSeleccionado);
+//                posicion = hijoSeleccionado;
+//            } else {
+//                break;
+//            }
+            if (hijoSeleccionado != posicion) {
                 intercambiarNodos(posicion, hijoSeleccionado);
                 posicion = hijoSeleccionado;
             } else {
@@ -118,7 +135,10 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
         }
     }
 
-    private boolean debeIntercambiar(HeapNode<K, T> padre, HeapNode<K, T> hijo) {
+    private boolean debeIntercambiar(HeapNode<K, T> padre, HeapNode<K, T> hijo)  {
+        if (padre == null || hijo == null) {
+            throw new IllegalArgumentException("El nodo no puede ser vacío");
+        }
         if (esMinHeap) {
             return padre.getKey().compareTo(hijo.getKey()) > 0;
         } else {
