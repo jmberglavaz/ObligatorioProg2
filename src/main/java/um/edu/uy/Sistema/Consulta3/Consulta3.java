@@ -11,7 +11,7 @@ import um.edu.uy.entities.Pelicula;
 
 public class Consulta3 {
 
-    public void realizarConsulta(MyHash<Integer, Pelicula> listaPeliculas, MyHash<String, Coleccion> listaColecciones) {
+    public static void realizarConsulta(MyHash<Integer, Pelicula> listaPeliculas, MyHash<Integer, Coleccion> listaColecciones) {
         MyHeapKT<Long, Coleccion> coleccionesPorIngresos = new MyHeapKTImplementation<>(listaColecciones.size(), false); // cambiar a <K, T>
 
         for (int iter = 0; iter < listaColecciones.size(); iter++) { // no sé si es size ak
