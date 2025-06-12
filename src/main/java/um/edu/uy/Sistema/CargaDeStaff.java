@@ -133,7 +133,7 @@ public class CargaDeStaff {
             }
 
             int inicioNombre = posNombre + CLAVE_NOMBRE.length();
-            int finNombre = entrada.indexOf("\"", inicioNombre);
+            int finNombre = entrada.indexOf("'", inicioNombre);
             if (finNombre == -1) {
                 posicionInicial = posDirector + TRABAJO_DIRECTOR.length();
                 continue;
