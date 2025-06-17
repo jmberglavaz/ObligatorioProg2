@@ -20,7 +20,7 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
     }
 
     @Override
-    public void insert(K key, T data)  {
+    public void insert(K key, T data) {
         if (key == null || data == null) {
             throw new IllegalArgumentException("Key y data no pueden ser nulos");
         }
@@ -37,7 +37,7 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
 
     @Override
     public HeapNode<K, T> deleteAndObtainNode() throws EmptyHeapException {
-        if (isEmpty() || heap[0] == null) {
+        if (isEmpty()) {
             throw new EmptyHeapException("Heap vacío");
         }
 
@@ -56,7 +56,7 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
 
     @Override
     public T deleteAndObtain() throws EmptyHeapException {
-        if (isEmpty() || heap[0] == null) {
+        if (isEmpty()) {
             throw new EmptyHeapException("Heap vacío");
         }
 
@@ -72,14 +72,12 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
         return dataRaiz;
     }
 
-
-
     @Override
     public int size() {
         return size;
     }
 
-    private void subirNodo(int posicion)  {
+    private void subirNodo(int posicion) {
         while (posicion > 0) {
             int posicionPadre = (posicion - 1) / 2;
 
@@ -92,50 +90,34 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
         }
     }
 
-    private void bajarNodo(int posicion)  {
-        while (posicion < size) {
+    private void bajarNodo(int posicion) {
+        while (true) {
             int hijoIzquierdo = 2 * posicion + 1;
             int hijoDerecho = 2 * posicion + 2;
-            int hijoSeleccionado = hijoIzquierdo;
+            int candidato = posicion;
 
-            if (hijoIzquierdo < size && heap[hijoIzquierdo] != null) {
-                if (debeIntercambiar(heap[posicion], heap[hijoIzquierdo])) {
-                    hijoSeleccionado = hijoIzquierdo;
-                }
-            }
-            if (hijoDerecho < size && heap[hijoDerecho] != null) {
-                if (debeIntercambiar(heap[hijoSeleccionado], heap[hijoDerecho])) {
-                    hijoSeleccionado = hijoDerecho;
-                }
+            // Comparar con hijo izquierdo
+            if (hijoIzquierdo < size && debeIntercambiar(heap[candidato], heap[hijoIzquierdo])) {
+                candidato = hijoIzquierdo;
             }
 
+            // Comparar con hijo derecho
+            if (hijoDerecho < size && debeIntercambiar(heap[candidato], heap[hijoDerecho])) {
+                candidato = hijoDerecho;
+            }
 
-//            if (hijoDerecho < size) {
-//                if (esMinHeap) {
-//                    hijoSeleccionado = heap[hijoIzquierdo].compareTo(heap[hijoDerecho]) < 0 ?
-//                            hijoIzquierdo : hijoDerecho;
-//                } else {
-//                    hijoSeleccionado = heap[hijoIzquierdo].compareTo(heap[hijoDerecho]) > 0 ?
-//                            hijoIzquierdo : hijoDerecho;
-//                }
-//            }
-
-//            if (debeIntercambiar(heap[posicion], heap[hijoSeleccionado])) {
-//                intercambiarNodos(posicion, hijoSeleccionado);
-//                posicion = hijoSeleccionado;
-//            } else {
-//                break;
-//            }
-            if (hijoSeleccionado != posicion) {
-                intercambiarNodos(posicion, hijoSeleccionado);
-                posicion = hijoSeleccionado;
-            } else {
+            // Si no hay intercambio necesario, terminar
+            if (candidato == posicion) {
                 break;
             }
+
+            // Intercambiar y continuar
+            intercambiarNodos(posicion, candidato);
+            posicion = candidato;
         }
     }
 
-    private boolean debeIntercambiar(HeapNode<K, T> padre, HeapNode<K, T> hijo)  {
+    private boolean debeIntercambiar(HeapNode<K, T> padre, HeapNode<K, T> hijo) {
         if (padre == null || hijo == null) {
             throw new IllegalArgumentException("El nodo no puede ser vacío");
         }
@@ -160,27 +142,17 @@ public class MyHeapKTImplementation<K extends Comparable<K>, T> implements MyHea
         return size == 0;
     }
 
-//    @Override
-//    public void mostrarHeap() {
-//        if (heapVacio()) {
-//            System.out.println("Heap vacío");
-//            return;
-//        }
-//
-//        int niveles = (int) (Math.log(size) / Math.log(2)) + 1;
-//        int elementosPorNivel = 1;
-//        int count = 0;
-//
-//        for (int i = 0; i < size; i++) {
-//            System.out.print(heap[i].getData() + " ");
-//            count++;
-//
-//            if (count == elementosPorNivel) {
-//                System.out.println();
-//                elementosPorNivel *= 2;
-//                count = 0;
-//            }
-//        }
-//        System.out.println();
-//    }
+    // Método auxiliar para debugging
+    public void mostrarHeap() {
+        if (isEmpty()) {
+            System.out.println("Heap vacío");
+            return;
+        }
+
+        System.out.println("Heap (" + (esMinHeap ? "Min" : "Max") + "):");
+        for (int i = 0; i < size; i++) {
+            System.out.print("[" + heap[i].getKey() + ":" + heap[i].getData() + "] ");
+        }
+        System.out.println();
+    }
 }

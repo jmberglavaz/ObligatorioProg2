@@ -5,6 +5,7 @@ import um.edu.uy.TADs.Heap.MyHeap;
 import um.edu.uy.TADs.List.MyArrayListImpl;
 import um.edu.uy.Exceptions.EmptyListException;
 import um.edu.uy.Exceptions.ListOutOfIndex;
+import um.edu.uy.TADs.List.MyList;
 
 public class Sorting<T extends Comparable<T>> {
 
@@ -148,7 +149,7 @@ public class Sorting<T extends Comparable<T>> {
         return result;
     }
 
-    public MyArrayListImpl<T> quickSort(MyArrayListImpl<T> lista) throws ListOutOfIndex, EmptyListException {
+    public MyList<T> quickSort(MyList<T> lista) throws ListOutOfIndex, EmptyListException {
         if (lista.size() < 2) {
             return lista;
         }
@@ -156,7 +157,7 @@ public class Sorting<T extends Comparable<T>> {
         return lista;
     }
 
-    private void quickSortAuxiliar(MyArrayListImpl<T> lista, int indiceBajo, int indiceAlto) throws ListOutOfIndex, EmptyListException {
+    private void quickSortAuxiliar(MyList<T> lista, int indiceBajo, int indiceAlto) throws ListOutOfIndex, EmptyListException {
         if (indiceBajo < indiceAlto) {
             int indicePivote = particion(lista, indiceBajo, indiceAlto);
 
@@ -165,7 +166,7 @@ public class Sorting<T extends Comparable<T>> {
         }
     }
 
-    private int particion(MyArrayListImpl<T> lista, int indiceBajo, int indiceAlto) throws ListOutOfIndex, EmptyListException {
+    private int particion(MyList<T> lista, int indiceBajo, int indiceAlto) throws ListOutOfIndex, EmptyListException {
         T pivote = lista.get(indiceAlto);
         int indiceMenor = indiceBajo - 1;
 
