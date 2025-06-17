@@ -121,7 +121,7 @@ public class UMovie {
         switch (opcion) {
             case 1 -> PrimeraConsulta.realizarConsulta(idiomas);
             case 2 -> System.out.println("Funcion de peliculas mejor evaluadas (Pendiente)");
-            case 3 -> Consulta3.realizarConsulta(peliculas, colecciones);
+            case 3 -> System.out.println("La tengo que arreglar con los de las FK"); //.realizarConsulta(peliculas, colecciones);
             case 4 -> CuartaConsulta.realizarConsulta(directores);
             case 5 -> System.out.println("Funcion de actor mejor calificado por cada mes (Pendiente)");
             case 6 -> System.out.println("Funcion de Mayor evaluador por cada uno de los 10 mejores generos (Pendiente)");
