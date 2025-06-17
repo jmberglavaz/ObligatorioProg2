@@ -65,6 +65,13 @@ public class Pelicula implements Comparable<Pelicula>{
         return listaResultado;
     }
 
+    public MyList<Evaluacion> getListaEvaluacionesEnMes(int mes){
+        if (mes < 1 || mes > 12){
+            throw new IllegalArgumentException("El mes tiene que estar entre 1 y 12");
+        }
+        return listaEvaluaciones.get(mes-1);
+    }
+
     public int getCantidadEvaluaciones() {
         int size = 0;
         for (MyList<Evaluacion> evalucionesPorMes : listaEvaluaciones){
