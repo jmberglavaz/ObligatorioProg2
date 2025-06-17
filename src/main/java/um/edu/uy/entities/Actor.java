@@ -23,4 +23,12 @@ public class Actor {
     public void agregarPelicula(Pelicula tempPeli) {
         peliculas.add(tempPeli);
     }
+
+    public int getCantidadEvaluacionesActorPorMes(int nroMes) {
+        int cantidadEvaluacionesEnMes = 0;
+        for (Pelicula pelicula : peliculas) {
+            cantidadEvaluacionesEnMes += pelicula.getListaEvaluacionesEnMes(nroMes).size();
+        }
+        return cantidadEvaluacionesEnMes;
+    }
 }
