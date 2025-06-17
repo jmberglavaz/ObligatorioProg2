@@ -5,7 +5,6 @@ import um.edu.uy.TADs.Hash.MyHash;
 import um.edu.uy.TADs.HeapKT.HeapNode;
 import um.edu.uy.TADs.HeapKT.MyHeapKT;
 import um.edu.uy.TADs.HeapKT.MyHeapKTImplementation;
-import um.edu.uy.TADs.List.MyList;
 import um.edu.uy.entities.Coleccion;
 import um.edu.uy.entities.Pelicula;
 

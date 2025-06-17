@@ -5,6 +5,7 @@ import um.edu.uy.Sistema.CargaDePeliculas;
 import um.edu.uy.Sistema.CargaDeStaff;
 import um.edu.uy.Sistema.Consulta1.PrimeraConsulta;
 import um.edu.uy.Sistema.Consulta3.Consulta3;
+import um.edu.uy.Sistema.Consulta4.CuartaConsulta;
 import um.edu.uy.TADs.Hash.MyHash;
 
 import java.util.InputMismatchException;
@@ -20,22 +21,6 @@ public class UMovie {
     private boolean datosCargados = false;
 
     public UMovie() {
-    }
-
-    public int cantPeliculas() {
-        return peliculas.size();
-    }
-
-    public int cantidadGeneros() {
-        return generos.size();
-    }
-
-    public void mostrarPeliculasPorGenero(int idGenero){
-        generos.get(idGenero).printPeliculas();
-    }
-
-    public void mostrarPeliculasPorIdioma(String acronimoIdioma){
-        idiomas.get(acronimoIdioma).printPeliculas();
     }
 
     public MyHash<Integer, Pelicula> getCatalogoDePeliculas() {
@@ -89,6 +74,8 @@ public class UMovie {
         }
     }
 
+    public int cantPeliculas(){return peliculas.size();}
+
     private boolean verificarOpcionPrincipal(int opcion){
         switch (opcion) {
             case 1 -> {
@@ -132,10 +119,10 @@ public class UMovie {
 
     private boolean verificarOpcionConsultas(int opcion){
         switch (opcion) {
-            case 1 -> PrimeraConsulta.realizarConsulta(peliculas, idiomas);
+            case 1 -> PrimeraConsulta.realizarConsulta(idiomas);
             case 2 -> System.out.println("Funcion de peliculas mejor evaluadas (Pendiente)");
             case 3 -> Consulta3.realizarConsulta(peliculas, colecciones);
-            case 4 -> System.out.println("Funcion de directores con mejores clasificaciones (Pendiente)");
+            case 4 -> CuartaConsulta.realizarConsulta(directores);
             case 5 -> System.out.println("Funcion de actor mejor calificado por cada mes (Pendiente)");
             case 6 -> System.out.println("Funcion de Mayor evaluador por cada uno de los 10 mejores generos (Pendiente)");
             case 7 -> {

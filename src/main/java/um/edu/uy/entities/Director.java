@@ -6,7 +6,7 @@ import um.edu.uy.TADs.Sorting;
 
 public class Director {
     private String nombre;
-    private final MyList<Integer> listaPeliculas;
+    private final MyList<Pelicula> listaPeliculas;
     private int cantEvaluaciones = 0;
     private float mediana = 0;
 
@@ -23,12 +23,12 @@ public class Director {
         this.nombre = nombre;
     }
 
-    public MyList<Integer> getListaPeliculas() {
+    public MyList<Pelicula> getListaPeliculas() {
         return listaPeliculas;
     }
 
-    public void agregarPelicula(int idPelicula) {
-        this.listaPeliculas.add(idPelicula);
+    public void agregarPelicula(Pelicula tempPelicula) {
+        this.listaPeliculas.add(tempPelicula);
     }
 
     public int getCantidadPeliculas(){

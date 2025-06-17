@@ -14,7 +14,7 @@ public class QuickSort<T extends Comparable<T>> {
             quickSort(lista, 0, lista.size() - 1);
         }
     }
-    private void quickSort(MyLinkedListImpl<T> lista, int inicio, int fin) {
+    public void quickSort(MyLinkedListImpl<T> lista, int inicio, int fin) {
         if (inicio < fin) {
             int indicePivote = partition(lista, inicio, fin);
             quickSort(lista, inicio, indicePivote - 1);
