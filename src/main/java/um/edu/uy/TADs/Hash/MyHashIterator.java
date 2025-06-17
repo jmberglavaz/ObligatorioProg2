@@ -25,12 +25,13 @@ public class MyHashIterator<T> implements Iterator<T> {
             throw new RuntimeException("");// Cambiar excepcion
         }
         T currentData = table[currentIndex].getData();
+        currentIndex++;
         moveToNextValid();
         return currentData;
     }
 
     private void moveToNextValid() {
-        while ((currentIndex < table.length) && (table[currentIndex + 1] != null || table[currentIndex + 1] != deleteNode)) {
+        while ((currentIndex < table.length) && (table[currentIndex] == null || table[currentIndex] == deleteNode)) {
             currentIndex++;
         }
     }

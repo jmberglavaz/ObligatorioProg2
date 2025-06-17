@@ -6,7 +6,7 @@ import um.edu.uy.TADs.List.MyList;
 public class Genero {
     private int id;
     private String nombre;
-    private MyList<Integer> listaPeliculas;
+    private MyList<Pelicula> listaPeliculas;
 
     public Genero(int id, String nombre) {
         this.id = id;
@@ -30,23 +30,15 @@ public class Genero {
         this.nombre = nombre;
     }
 
-    public MyList<Integer> getListaPeliculas() {
+    public MyList<Pelicula> getListaPeliculas() {
         return listaPeliculas;
     }
 
-    public void setListaPeliculas(MyList<Integer> listaPeliculas) {
+    public void setListaPeliculas(MyList<Pelicula> listaPeliculas) {
         this.listaPeliculas = listaPeliculas;
     }
 
-    public void agregarPelicula(int id) {
-        listaPeliculas.add(id);
-    }
-
-    //Funcion de prueba
-    public void printPeliculas() {
-        System.out.println(nombre);
-        for (int i = 0; i < listaPeliculas.size(); i++) {
-            System.out.println(listaPeliculas.get(i));
-        }
+    public void agregarPelicula(Pelicula tempPeli) {
+        listaPeliculas.add(tempPeli);
     }
 }

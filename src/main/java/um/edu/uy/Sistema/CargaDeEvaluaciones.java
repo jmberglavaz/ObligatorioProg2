@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Date;
 
 public class CargaDeEvaluaciones {
@@ -48,6 +49,7 @@ public class CargaDeEvaluaciones {
                 fecha = new Date(Long.parseLong(lineaDatos[3])*1000);
                 cantidadValida++;
             } catch (Exception e) {continue;}
+
 
             if (idUsuario >= 0) {
                 Pelicula pelicula = peliculas.get(idPelicula);
