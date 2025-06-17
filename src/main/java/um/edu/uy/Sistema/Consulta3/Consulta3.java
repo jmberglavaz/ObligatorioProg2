@@ -18,8 +18,7 @@ public class Consulta3 {
                 Coleccion coleccion = listaColecciones.obtain(iter);
                 long ingresosColeccion = 0;
 
-                for (Pelicula Pelicula : coleccion.getListaDePeliculas()) {
-                    Pelicula pelicula = listaPeliculas.get(idPelicula);
+                for (Pelicula pelicula : coleccion.getListaDePeliculas()) {
                     if (pelicula != null) {
                         ingresosColeccion += pelicula.getIngresos();
                     }
