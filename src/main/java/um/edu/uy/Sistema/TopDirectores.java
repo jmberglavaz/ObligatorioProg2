@@ -1,18 +1,11 @@
-package um.edu.uy.Sistema.Consulta4;
+package um.edu.uy.Sistema;
 
 import um.edu.uy.TADs.Hash.MyHash;
 import um.edu.uy.TADs.HeapKT.MyHeapKT;
 import um.edu.uy.TADs.HeapKT.MyHeapKTImplementation;
-import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
-import um.edu.uy.TADs.List.MyArrayListImpl;
-import um.edu.uy.TADs.List.MyList;
-import um.edu.uy.TADs.QuickSort;
-import um.edu.uy.TADs.Sorting;
 import um.edu.uy.entities.Director;
-import um.edu.uy.entities.Evaluacion;
-import um.edu.uy.entities.Pelicula;
 
-public class CuartaConsulta {
+public class TopDirectores {
 
     public static void realizarConsulta(MyHash<String, Director> listaDeDirectores){
         long inicio = System.currentTimeMillis();

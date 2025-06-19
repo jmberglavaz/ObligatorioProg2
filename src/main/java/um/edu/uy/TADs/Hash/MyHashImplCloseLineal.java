@@ -43,7 +43,7 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
 
         if (recorrido >= capacity) {
             // Esto no debería pasar con el control de factor de carga
-            System.err.println("Error: Tabla llena");
+            System.out.println("Error: Tabla llena");
             incrementLength();
             insert(clave, data);
             return;
@@ -55,12 +55,12 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
 
     @Override
     public boolean contains(K clave) {
-        return search(clave) >= 0;
+        return searchIndex(clave) >= 0;
     }
 
     @Override
     public void delete(K clave) {
-        int index = search(clave);
+        int index = searchIndex(clave);
         if (index < 0){
             throw new ValueNoExist("This object does not exist");
         }
@@ -94,7 +94,7 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
 
     @Override
     public T get(K clave) {
-        int index = search(clave);
+        int index = searchIndex(clave);
         if (index < 0){
             return null;
         }
@@ -108,6 +108,17 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    @Override
+    public void changeValue(K clave, T newData){
+        int index = searchIndex(clave);
+
+        if (index < 0){
+            throw new ValueNoExist("The value no exist in the table");
+        }
+
+        table[index].setData(newData);
     }
 
     private boolean isPrime(int number) {
@@ -130,7 +141,7 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
         return number;
     }
 
-    private int search(K clave) {
+    private int searchIndex(K clave) {
         int index = hash(clave);
         int probes = 0;
 
@@ -152,8 +163,8 @@ public class MyHashImplCloseLineal<K,T> implements MyHash<K,T> {
         hash ^= (hash >>> 16);
         return Math.abs(hash) % capacity;
     }
-
     // Devolper method
+
     public void printStats() {
         System.out.println("Hash Table Stats:");
         System.out.println("  Tamano: " + size);

@@ -1,4 +1,4 @@
-package um.edu.uy.Sistema.Consulta3;
+package um.edu.uy.Sistema;
 
 import um.edu.uy.Exceptions.EmptyHeapException;
 import um.edu.uy.TADs.Hash.MyHash;
@@ -8,7 +8,7 @@ import um.edu.uy.TADs.HeapKT.MyHeapKTImplementation;
 import um.edu.uy.entities.Coleccion;
 import um.edu.uy.entities.Pelicula;
 
-public class Consulta3 {
+public class TopSagaConMayorIngresos {
 
     public static void realizarConsulta(MyHash<Integer, Pelicula> listaPeliculas, MyHash<Integer, Coleccion> listaColecciones){
         MyHeapKT<Long, Coleccion> coleccionesPorIngresos = new MyHeapKTImplementation<>(listaColecciones.size(), false); // cambiar a <K, T>

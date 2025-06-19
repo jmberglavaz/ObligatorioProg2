@@ -3,7 +3,7 @@
 **Ubicación de Archivos**
 =========================
 
-Los archivos `.csv` (credits, movie_metadata y ratings_1mm) deben estar en la dirección `src/main/resources`.
+Los archivos `.csv` (credits, movie_metadata y ratings_1mm) deben estar en la dirección `src/Main/resources`.
 
 Si no se cumple esto, no se cargarán los datos y se mostrará un mensaje de error crítico, además de un recordatorio para agregarlos.
 

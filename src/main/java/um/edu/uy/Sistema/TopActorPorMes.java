@@ -1,18 +1,12 @@
-package um.edu.uy.Sistema.Consulta5;
+package um.edu.uy.Sistema;
 
 import um.edu.uy.TADs.Hash.MyHash;
-import um.edu.uy.TADs.Hash.MyHashImplCloseLineal;
-import um.edu.uy.TADs.HeapKT.HeapNode;
 import um.edu.uy.TADs.HeapKT.MyHeapKT;
 import um.edu.uy.TADs.HeapKT.MyHeapKTImplementation;
-import um.edu.uy.TADs.List.Linked.MyLinkedListImpl;
-import um.edu.uy.TADs.List.MyList;
 import um.edu.uy.entities.Actor;
-import um.edu.uy.entities.Coleccion;
-import um.edu.uy.entities.Evaluacion;
 import um.edu.uy.entities.Pelicula;
 
-public class Consulta5 {
+public class TopActorPorMes {
     public void realizarConsulta(MyHash<Integer, Pelicula> listaPeliculas, MyHash<Integer, Actor> listaActores){
         MyHeapKT<Integer, Actor> actoresPorRatingEnero = new MyHeapKTImplementation<>(listaPeliculas.size()/12, false);
         MyHeapKT<Integer, Actor> actoresPorRatingFebrero = new MyHeapKTImplementation<>(listaPeliculas.size()/12, false);
