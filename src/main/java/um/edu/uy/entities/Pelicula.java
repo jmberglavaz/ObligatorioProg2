@@ -109,4 +109,5 @@ public class Pelicula implements Comparable<Pelicula>{
     public int compareTo(Pelicula tempPelicula) {
         return Integer.compare(this.getCantidadEvaluaciones(), tempPelicula.getCantidadEvaluaciones());
     }
+
 }

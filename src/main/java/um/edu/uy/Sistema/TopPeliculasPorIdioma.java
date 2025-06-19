@@ -1,4 +1,4 @@
-package um.edu.uy.Sistema.Consulta1;
+package um.edu.uy.Sistema;
 
 import um.edu.uy.TADs.Hash.MyHash;
 import um.edu.uy.TADs.Heap.MyHeap;
@@ -6,7 +6,7 @@ import um.edu.uy.TADs.Heap.MyHeapImpl;
 import um.edu.uy.entities.Idioma;
 import um.edu.uy.entities.Pelicula;
 
-public class PrimeraConsulta {
+public class TopPeliculasPorIdioma {
     private static final String[] idiomas = {"en","fr","it","es","pt"};
     private static final String[] nombresIdiomas = {"Ingles", "Frances", "Italiano", "Español", "Portugues"};
 
